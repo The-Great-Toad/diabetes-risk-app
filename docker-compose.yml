@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres:15.2
+    container_name: postgresql_diabetes_risk_db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: diabetes_risk
