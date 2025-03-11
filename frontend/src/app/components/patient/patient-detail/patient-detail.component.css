@@ -1,0 +1,9 @@
+.date-picker {
+  display: flex;
+  justify-content: start;
+  align-items: end;
+}
+
+#dateInput {
+  color: rgba(0, 0, 0, 0.87) !important;
+}

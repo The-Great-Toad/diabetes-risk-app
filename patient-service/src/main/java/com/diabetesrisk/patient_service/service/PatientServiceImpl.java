@@ -18,8 +18,52 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
 
+    private static final List<Patient> patients;
+
     public PatientServiceImpl(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
+        patientRepository.saveAll(patients);
+    }
+
+    static {
+        LOGGER.info(LOG_ID + " - Patient Service Initialized");
+        Patient patient = Patient.builder()
+                .lastName("TestNone")
+                .firstName("Test")
+                .birthDate("1966-12-31")
+                .gender("F")
+                .address("1 Brookside St")
+                .phoneNumber("100-222-3333")
+                .build();
+
+        Patient patient2 = Patient.builder()
+                .lastName("TestBorderline")
+                .firstName("Test")
+                .birthDate("1945-06-24")
+                .gender("M")
+                .address("2 High St")
+                .phoneNumber("200-333-4444")
+                .build();
+
+        Patient patient3 = Patient.builder()
+                .lastName("TestInDanger")
+                .firstName("Test")
+                .birthDate("2004-06-18")
+                .gender("M")
+                .address("3 Club Road")
+                .phoneNumber("300-444-5555")
+                .build();
+
+        Patient patient4 = Patient.builder()
+                .lastName("TestEarlyOnset")
+                .firstName("Test")
+                .birthDate("2002-06-28")
+                .gender("F")
+                .address("4 Valley Dr")
+                .phoneNumber("400-555-6666")
+                .build();
+
+        patients = List.of(patient, patient2, patient3, patient4);
     }
 
     @Override

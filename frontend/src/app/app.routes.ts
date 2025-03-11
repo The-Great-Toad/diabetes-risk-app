@@ -7,9 +7,10 @@ import { AppComponent } from './app.component';
 
 export const routes: Routes = [
   //   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '/', component: AppComponent },
-  { path: 'patient-list', component: PatientListComponent },
-  { path: 'patient-detail', component: PatientDetailComponent },
-  { path: 'patient-form', component: PatientFormComponent },
+  { path: '', component: PatientListComponent },
+  { path: 'patients', component: PatientListComponent },
+  { path: 'patients/view/:id', component: PatientDetailComponent },
+  { path: 'patients/edit/:id', component: PatientDetailComponent },
+  { path: 'patients/create', component: PatientFormComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
