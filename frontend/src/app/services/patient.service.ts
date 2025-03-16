@@ -8,16 +8,24 @@ import { Patient } from '../models/patient';
 })
 export class PatientService {
   private http = inject(HttpClient);
+  private patientServiceBaseURL = 'http://localhost:8080/patients';
 
   public getPatients(): Observable<Patient[]> {
-    return this.http.get<Patient[]>('http://localhost:8080/patients');
+    return this.http.get<Patient[]>(this.patientServiceBaseURL);
   }
 
   public getPatient(id: number): Observable<Patient> {
-    return this.http.get<Patient>(`http://localhost:8080/patients/${id}`);
+    return this.http.get<Patient>(`${this.patientServiceBaseURL}/${id}`);
+  }
+
+  public createPatient(patient: Patient): Observable<Patient> {
+    return this.http.post<Patient>(this.patientServiceBaseURL, patient);
   }
 
   public updatePatient(patient: Patient): Observable<Patient> {
-    return this.http.put<Patient>(`http://localhost:8080/patients`, patient);
+    return this.http.put<Patient>(
+      `${this.patientServiceBaseURL}/${patient.id}`,
+      patient
+    );
   }
 }

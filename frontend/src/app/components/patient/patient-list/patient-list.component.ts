@@ -38,8 +38,8 @@ export class PatientListComponent implements OnInit {
   public dataSource!: MatTableDataSource<Patient>;
   public displayedColumns: string[] = [
     'id',
-    'lastName',
-    'firstName',
+    'lastname',
+    'firstname',
     'birthDate',
     'gender',
     'address',

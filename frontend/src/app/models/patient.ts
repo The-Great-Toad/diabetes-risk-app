@@ -1,7 +1,7 @@
 export class Patient {
   id!: number;
-  firstName!: string;
-  lastName!: string;
+  firstname!: string;
+  lastname!: string;
   birthDate!: string;
   gender!: string;
   address!: string;
