@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/patients")
-//@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin
 public class PatientController {
 
     private final PatientService patientService;
@@ -42,7 +42,7 @@ public class PatientController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<Patient> updatePatient(@RequestBody Patient patient) {
         return ResponseEntity.ok(patientService.updatePatient(patient));
     }

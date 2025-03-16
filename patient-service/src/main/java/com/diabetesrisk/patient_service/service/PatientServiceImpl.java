@@ -5,6 +5,7 @@ import com.diabetesrisk.patient_service.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,8 +34,7 @@ public class PatientServiceImpl implements PatientService {
                 .birthDate("1966-12-31")
                 .gender("F")
                 .address("1 Brookside St")
-                .phoneNumber("100-222-3333")
-                .build();
+                .phoneNumber("100-222-3333");
 
         Patient patient2 = Patient.builder()
                 .lastName("TestBorderline")
@@ -42,8 +42,7 @@ public class PatientServiceImpl implements PatientService {
                 .birthDate("1945-06-24")
                 .gender("M")
                 .address("2 High St")
-                .phoneNumber("200-333-4444")
-                .build();
+                .phoneNumber("200-333-4444");
 
         Patient patient3 = Patient.builder()
                 .lastName("TestInDanger")
@@ -51,8 +50,7 @@ public class PatientServiceImpl implements PatientService {
                 .birthDate("2004-06-18")
                 .gender("M")
                 .address("3 Club Road")
-                .phoneNumber("300-444-5555")
-                .build();
+                .phoneNumber("300-444-5555");
 
         Patient patient4 = Patient.builder()
                 .lastName("TestEarlyOnset")
@@ -60,15 +58,14 @@ public class PatientServiceImpl implements PatientService {
                 .birthDate("2002-06-28")
                 .gender("F")
                 .address("4 Valley Dr")
-                .phoneNumber("400-555-6666")
-                .build();
+                .phoneNumber("400-555-6666");
 
         patients = List.of(patient, patient2, patient3, patient4);
     }
 
     @Override
     public List<Patient> getPatients() {
-        return patientRepository.findAll();
+        return patientRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     @Override

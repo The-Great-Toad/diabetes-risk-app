@@ -1,15 +1,9 @@
 package com.diabetesrisk.patient_service.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+import java.util.StringJoiner;
+
 @Entity
 @Table
 public class Patient {
@@ -18,11 +12,11 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "firstname")
-    private String firstName;
+    @Column
+    private String firstname;
 
-    @Column(name = "lastname")
-    private String lastName;
+    @Column
+    private String lastname;
 
     @Column(name = "birthdate")
     private String birthDate;
@@ -37,6 +31,110 @@ public class Patient {
     private String phoneNumber;
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        return firstname + " " + lastname;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstName) {
+        this.firstname = firstName;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastName) {
+        this.lastname = lastName;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Patient.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("firstName='" + firstname + "'")
+                .add("lastName='" + lastname + "'")
+                .add("birthDate='" + birthDate + "'")
+                .add("gender='" + gender + "'")
+                .add("address='" + address + "'")
+                .add("phoneNumber='" + phoneNumber + "'")
+                .toString();
+    }
+
+    public static Patient builder() {
+        return new Patient();
+    }
+
+    public Patient lastName(String lastname) {
+        setLastname(lastname);
+        return this;
+    }
+
+    public Patient firstName(String firstname) {
+        setFirstname(firstname);
+        return this;
+    }
+
+    public Patient birthDate(String birthdate) {
+        setBirthDate(birthdate);
+        return this;
+    }
+
+    public Patient gender(String gender) {
+        setGender(gender);
+        return this;
+    }
+
+    public Patient address(String address) {
+        setAddress(address);
+        return this;
+    }
+
+    public Patient phoneNumber(String phonenumber) {
+        setPhoneNumber(phonenumber);
+        return this;
+    }
+
 }

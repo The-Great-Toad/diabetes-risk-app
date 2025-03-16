@@ -7,21 +7,21 @@
 @if (patient) {
 <form>
     <fieldset [disabled]="!isUpdating()">
-        <legend>{{ patient.firstName }} {{ patient.lastName }}</legend>
+        <legend>{{ patient.firstname }} {{ patient.lastname }}</legend>
         <!-- Lastname & Firstname-->
         <div class="row g-2">
             <div class="col-md-6">
                 <!-- Lastname -->
                 <div class="form-group">
                     <label for="lastname">Lastname</label>
-                    <input type="text" class="form-control" id="lastname" [(ngModel)]="patient.lastName" name="lastname">
+                    <input type="text" class="form-control" id="lastname" [(ngModel)]="patient.lastname" name="lastname">
                 </div>
             </div>
             <div class="col-md-6">
                 <!-- Firstname -->
                 <div class="form-group">
                     <label for="firstname">Firstname</label>
-                    <input type="text" class="form-control" id="firstname" [(ngModel)]="patient.firstName" name="firstname">
+                    <input type="text" class="form-control" id="firstname" [(ngModel)]="patient.firstname" name="firstname">
                 </div>
             </div>
         </div>
