@@ -1,0 +1,38 @@
+server:
+  port: 8080
+#  servlet:
+#    context-path: "/gateway"
+
+spring:
+  cloud:
+    gateway:
+
+#     https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/cors-configuration.html
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            max-age: 3600
+        add-to-simple-url-handler-mapping: true
+
+      default-filters:
+        - PrefixPath=/api
+        - AddResponseHeader=X-Powered-By, BearCode
+
+#      https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/starter.html:
+      routes:
+        - id: patients-route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/patients/**
+
+# https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/troubleshooting.html
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG
