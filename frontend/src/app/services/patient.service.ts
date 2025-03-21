@@ -11,6 +11,8 @@ export class PatientService {
   private patientServiceBaseURL = 'http://localhost:8080/patients';
 
   public getPatients(): Observable<Patient[]> {
+    console.log('patient service base url', this.patientServiceBaseURL);
+
     return this.http.get<Patient[]>(this.patientServiceBaseURL);
   }
 

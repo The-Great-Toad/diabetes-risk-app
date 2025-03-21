@@ -20,11 +20,13 @@ spring:
       default-filters:
         - PrefixPath=/api
         - AddResponseHeader=X-Powered-By, BearCode
+#        - TokenRelay=
+#        - RemoveRequestHeader=Cookie
 
 #      https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/starter.html:
       routes:
         - id: patients-route
-          uri: http://localhost:8081
+          uri: ${PATIENTS_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/patients/**
 
