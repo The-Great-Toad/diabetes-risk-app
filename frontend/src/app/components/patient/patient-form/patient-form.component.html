@@ -1,0 +1,111 @@
+<h1>Add a new patient</h1>
+
+<!-- Spinner -->
+@if (isLoading()) {
+<mat-progress-bar mode="query"></mat-progress-bar>
+}
+
+<!-- Patient Form -->
+<form class="mt-3" [formGroup]="patientForm" (ngSubmit)="submitPatient()">
+    <!-- Lastname & Firstname-->
+    <div class="row g-2">
+        <div class="col-md-6">
+            <!-- Lastname -->
+            <div class="form-group">
+                <label for="lastname">Lastname</label>
+                <input type="text" class="form-control" [ngClass]="{'is-invalid': isInvalidLastname()}" id="lastname" name="lastname" formControlName="lastname">
+                @if (isInvalidLastname()) {
+                <div class="invalid-feedback">
+                    Invalid lastname.
+                </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Firstname -->
+            <div class="form-group">
+                <label for="firstname">Firstname</label>
+                <input type="text" class="form-control" [ngClass]="{'is-invalid': isInvalidFirstname()}" id="firstname" name="firstname" formControlName="firstname">
+                @if (isInvalidFirstname()) {
+                <div class="invalid-feedback">
+                    Invalid firstname.
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- BirthDate & Gender-->
+    <div class="row g-2">
+        <div class="col-md-6 date-picker">
+            <!-- Date of birth -->
+            <div class="form-group">
+                <mat-form-field>
+                    <mat-label>Date of birth</mat-label>
+                    <input id="dateInput" class="form-control" [ngClass]="{'is-invalid': isInvalidBirthDate()}" matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker" name="birthDate" formControlName="birthDate" (dateChange)="updateDate($event)">
+                    <mat-hint>DD/MM/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                </mat-form-field>
+                @if (isInvalidBirthDate()) {
+                <div class="invalid-feedback" style="display: block;">
+                    Invalid date.
+                </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Gender -->
+            <div class="mb-3">
+                <label for="gender" class="form-label">Gender</label>
+                <select id="gender" class="form-select" [ngClass]="{'is-invalid': isInvalidGender()}" name="gender" formControlName="gender">
+                    <option value="" disabled>Select a gender</option>
+                    <option *ngFor="let gender of genders; let i = index " id="{{i + 1}}-{{gender.key}}" [value]="gender.key">{{ gender.value }}</option>
+                </select>
+                @if (isInvalidGender()) {
+                <div class="invalid-feedback">
+                    Invalid gender.
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Address & Phone -->
+    <div class="row g-2">
+        <div class="col-md-6">
+            <!-- Address -->
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" class="form-control" [ngClass]="{'is-invalid': isInvalidAddress()}" id="address" name="address" formControlName="address">
+                @if (isInvalidAddress()) {
+                <div class="invalid-feedback">
+                    Invalid address.
+                </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Address -->
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" class="form-control" [ngClass]="{'is-invalid': isInvalidPhone()}" id="phone" name="phone" formControlName="phone" [maxlength]="phoneLength" (keydown)="validatePhoneInputValue($event)">
+                @if (isInvalidPhone()) {
+                <div class="invalid-feedback">
+                    Invalid phone number.
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Update validation BTNs -->
+    <div class="row g-2 mt-3">
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-6 text-end">
+            <button type="submit" class="btn btn-primary me-2">Submit</button>
+            <button type="button" class="btn btn-secondary" routerLink="/patients">Cancel</button>
+        </div>
+    </div>
+</form>
