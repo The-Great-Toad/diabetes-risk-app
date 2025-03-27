@@ -12,7 +12,6 @@ export class PatientService {
 
   public getPatients(): Observable<Patient[]> {
     console.log('patient service base url', this.patientServiceBaseURL);
-
     return this.http.get<Patient[]>(this.patientServiceBaseURL);
   }
 

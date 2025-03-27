@@ -39,13 +39,13 @@ services:
     depends_on:
       - patient-service
 
-  frontend:
-    build: ./frontend
-    container_name: frontend
-    ports:
-      - "4200:4200"
-    depends_on:
-      - gateway-service
+#  frontend:
+#    build: ./frontend
+#    container_name: frontend
+#    ports:
+#      - "4200:4200"
+#    depends_on:
+#      - gateway-service
         
 #volumes:
 #    postgresql_volumes:

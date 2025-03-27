@@ -164,7 +164,9 @@ export class PatientFormComponent implements OnInit, OnDestroy {
     this.patientService.createPatient(this.patient).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.router.navigate(['/patients']);
+        this.router.navigate(['/patients'], {
+          state: { createSuccess: true },
+        });
       },
       error: (error) => {
         this.isLoading.set(false);

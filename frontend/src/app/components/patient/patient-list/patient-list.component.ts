@@ -31,6 +31,7 @@ export class PatientListComponent implements OnInit {
 
   public isLoading = signal<boolean>(false);
   public isUpdateSuccessful = signal<boolean>(false);
+  public isAddSuccessful = signal<boolean>(false);
 
   public patients: Patient[] = [];
   public addPatientTooltip: string = 'Add a new patient';
@@ -54,11 +55,20 @@ export class PatientListComponent implements OnInit {
   public faPlus = faPlus;
 
   constructor() {
-    console.log('route: ', this.route);
+    const navigation = this.router.getCurrentNavigation();
+    console.log('navigation: ', navigation);
 
-    this.route.data.subscribe((data) => {
-      console.log('data: ', data);
-    });
+    if (navigation?.extras?.state) {
+      /* check for update */
+      if (navigation.extras.state['updateSuccess']) {
+        this.isUpdateSuccessful.set(navigation.extras.state['updateSuccess']);
+      }
+
+      /* check for add */
+      if (navigation.extras.state['createSuccess']) {
+        this.isAddSuccessful.set(navigation.extras.state['createSuccess']);
+      }
+    }
   }
 
   ngOnInit() {

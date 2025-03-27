@@ -1,0 +1,30 @@
+<div class="container">
+    <section>
+        <!-- Login Error -->
+        @if (error()) {
+        <div class="alert alert-danger" role="alert">
+            <!-- <h4 class="alert-heading">{{ error().status }} - {{ error().statusText }}</h4> -->
+            <p>{{ error() }}</p>
+        </div>
+        }
+        <!-- Logout Success Message -->
+        @if (hasLogout()) {
+        <div class="alert alert-success" role="alert">
+            <p>{{ logoutSuccessMsg() }}</p>
+        </div>
+        }
+
+        <!-- Form -->
+        <form role="form" (submit)="login()">
+            <div class="form-group" style="width: fit-content;">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" [(ngModel)]="credentials.username" />
+            </div>
+            <div class="form-group mt-2" style="width: fit-content;">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" [(ngModel)]="credentials.password" />
+            </div>
+            <button type="submit" class="btn btn-primary mt-4">Submit</button>
+        </form>
+    </section>
+</div>

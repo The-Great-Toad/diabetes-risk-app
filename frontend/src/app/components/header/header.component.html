@@ -5,10 +5,21 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav justify-content-between" style="width: 100%;">
                 <li class="nav-item">
                     <a class="nav-link" routerLink="/patients" routerLinkActive="active" ariaCurrentWhenActive="page">Patients</a>
                 </li>
+                <div style="display: flex;">
+                    @if (isAuthenticated()) {
+                    <li id="logout" class="nav-item">
+                        <a class="nav-link" (click)="logout()">Logout</a>
+                    </li>
+                    } @else {
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Login</a>
+                    </li>
+                    }
+                </div>
             </ul>
         </div>
     </div>
