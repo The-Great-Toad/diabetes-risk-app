@@ -1,0 +1,57 @@
+server:
+  port: 8080
+#  servlet:
+#    context-path: "/gateway"
+
+spring:
+  security:
+    user:
+      name: user
+      password: password
+
+  cloud:
+    gateway:
+
+#     https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/cors-configuration.html
+      globalcors:
+        cors-configurations:
+          '[/**]': # Applique CORS à toutes les routes
+#            allowedOrigins: "*"
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods: "*"
+#                - GET
+#                - POST
+#                - PUT
+#                - DELETE
+#                - OPTIONS
+            allowedHeaders: "*"
+            max-age: 3600
+#            add-to-simple-url-handler-mapping: true
+            allowCredentials: true
+
+      default-filters:
+        - AddResponseHeader=X-Powered-By, BearCode
+#        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+#      https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/starter.html:
+      routes:
+        - id: authentication-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/login
+        - id: patients-route
+          uri: ${PATIENTS_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/patients/**
+          filters:
+            - PrefixPath=/api
+
+# https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/troubleshooting.html
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG

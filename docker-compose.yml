@@ -1,0 +1,51 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres:16
+    container_name: postgresql_container
+#    restart: always
+    ports:
+      - "5431:5432"
+    environment:
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: patient_db
+#    command:
+#        - postgres --default-authentication-method=trust --skip-ssl
+#    volumes:
+#      - postgresql_volumes:/var/lib/postgresql/data
+
+  patient-service:
+    build: ./patient-service
+    container_name: patient-service
+    ports:
+      - "8081:8081"
+    environment:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://db/patient_db
+        SPRING_DATASOURCE_USERNAME: postgres
+        SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+        - db
+
+  gateway-service:
+    build: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    environment:
+        PATIENTS_SERVICE_URI: http://patient-service:8081
+    depends_on:
+      - patient-service
+
+#  frontend:
+#    build: ./frontend
+#    container_name: frontend
+#    ports:
+#      - "4200:4200"
+#    depends_on:
+#      - gateway-service
+        
+#volumes:
+#    postgresql_volumes:

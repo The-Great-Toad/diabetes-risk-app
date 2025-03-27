@@ -1,0 +1,8 @@
+.actions {
+  margin-right: 1rem;
+  color: black;
+}
+
+.actions:hover {
+  color: #007bff;
+}
