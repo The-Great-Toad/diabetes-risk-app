@@ -1,0 +1,7 @@
+button.btn {
+  min-width: 6rem;
+}
+
+button.btn-primary {
+  margin-right: 1rem;
+}

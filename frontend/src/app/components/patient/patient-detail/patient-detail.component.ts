@@ -16,6 +16,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import moment, { Moment } from 'moment';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { NotesListComponent } from '../../notes/notes-list/notes-list.component';
 
 @Component({
   selector: 'app-patient-detail',
@@ -27,6 +28,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatInputModule,
     MatButtonModule,
     MatProgressBarModule,
+    NotesListComponent,
   ],
   templateUrl: './patient-detail.component.html',
   styleUrl: './patient-detail.component.css',

@@ -1,0 +1,25 @@
+<section id="patient-notes" class="mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Patient Notes</h2>
+        <button class="btn btn-primary" (click)="openAddNoteDialog()">
+            <fa-icon [icon]="faPlus"></fa-icon> Add Note
+        </button>
+    </div>
+
+    @if (showNewNoteForm()) {
+    <app-notes-form [patient]="patient()" (noteAdded)="onNoteAdded($event)"></app-notes-form>
+    }
+
+    @if (notes.length === 0) {
+    <p>No history available</p>
+    } @else {
+    <mat-list>
+        <mat-list-item *ngFor="let note of notes">
+            <div class="notes-container">
+                <fa-icon [icon]="faNote"></fa-icon>
+                <p matLine> {{ note.note }}</p>
+            </div>
+        </mat-list-item>
+    </mat-list>
+    }
+</section>

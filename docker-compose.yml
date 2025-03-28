@@ -1,44 +1,69 @@
-version: '3.1'
+version: "3.1"
 
 services:
+    db:
+        image: postgres:16
+        container_name: postgresql_container
+        #    restart: always
+        ports:
+            - "5431:5432"
+        environment:
+            POSTGRES_USERNAME: postgres
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: patient_db
+    #    command:
+    #        - postgres --default-authentication-method=trust --skip-ssl
+    #    volumes:
+    #      - postgresql_volumes:/var/lib/postgresql/data
 
-  db:
-    image: postgres:16
-    container_name: postgresql_container
-#    restart: always
-    ports:
-      - "5431:5432"
-    environment:
-      POSTGRES_USERNAME: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: patient_db
-#    command:
-#        - postgres --default-authentication-method=trust --skip-ssl
-#    volumes:
-#      - postgresql_volumes:/var/lib/postgresql/data
+    mongodb:
+        image: mongo:latest
+        container_name: mongodb_container
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: mongo
+            MONGO_INITDB_ROOT_PASSWORD: password
+            MONGO_INITDB_DATABASE: note_db
+        # volumes:
+        #   - mongodb_data:/data/db
 
-  patient-service:
-    build: ./patient-service
-    container_name: patient-service
-    ports:
-      - "8081:8081"
-    environment:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://db/patient_db
-        SPRING_DATASOURCE_USERNAME: postgres
-        SPRING_DATASOURCE_PASSWORD: password
-    depends_on:
-        - db
+    patient-service:
+        build: ./patient-service
+        container_name: patient-service
+        ports:
+            - "8081:8081"
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:postgresql://db/patient_db
+            SPRING_DATASOURCE_USERNAME: postgres
+            SPRING_DATASOURCE_PASSWORD: password
+        depends_on:
+            - db
 
-  gateway-service:
-    build: ./gateway-service
-    container_name: gateway-service
-    ports:
-      - "8080:8080"
-    environment:
-        PATIENTS_SERVICE_URI: http://patient-service:8081
-    depends_on:
-      - patient-service
+    notes-service:
+        build: ./notes-service
+        container_name: notes-service
+        ports:
+            - "8082:8082"
+        environment:
+            SPRING_DATA_MONGODB_URI: mongodb://mongo:password@mongodb:27017/note_db?authSource=admin
+            SPRING_DATA_MONGODB_USERNAME: mongo
+            SPRING_DATA_MONGODB_PASSWORD: password
+            SPRING_DATA_MONGODB_DATABASE: note_db
+        depends_on:
+            - mongodb
 
+    gateway-service:
+        build: ./gateway-service
+        container_name: gateway-service
+        ports:
+            - "8080:8080"
+        environment:
+            PATIENTS_SERVICE_URI: http://patient-service:8081
+            NOTES_SERVICE_URI: http://notes-service:8082
+        depends_on:
+            - patient-service
+            - notes-service
 #  frontend:
 #    build: ./frontend
 #    container_name: frontend
@@ -46,6 +71,7 @@ services:
 #      - "4200:4200"
 #    depends_on:
 #      - gateway-service
-        
+
 #volumes:
-#    postgresql_volumes:
+#    postgresql_data:
+#    mongodb_data:
