@@ -20,6 +20,7 @@ export class LoginComponent {
   public logoutSuccessMsg = signal<string>(
     'You have been logged out successfully.'
   );
+  public invalidCredentialsMsg = signal<string>('');
 
   credentials = { username: '', password: '' };
 
@@ -31,16 +32,26 @@ export class LoginComponent {
   }
 
   public login(): void {
-    // this.authenticationService.authenticate(this.credentials, () => {
-    //   this.router.navigateByUrl('/patients');
-    // });
+    this.hasLogout.set(false);
+    this.invalidCredentialsMsg.set('');
+
     this.authenticationService.authenticate(this.credentials).subscribe({
       next: () => {
         this.router.navigateByUrl('/patients');
       },
       error: (error: HttpErrorResponse) => {
-        console.log('error', error);
-        this.error.set(error.message);
+        console.log('login error: ', error);
+        this.invalidCredentialsMsg.set(
+          'Invalid username or password. Please try again.'
+        );
+        // if (error.status === 401) {
+        //   this.invalidCredentialsMsg.set(
+        //     'Invalid username or password. Please try again.'
+        //   );
+        //   // TODO: not working, need to check why
+        // } else {
+        //   this.error.set(error.message);
+        // }
       },
     });
   }

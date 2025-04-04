@@ -7,6 +7,12 @@
             <p>{{ error() }}</p>
         </div>
         }
+        <!-- Invalid credential Message -->
+        @if (invalidCredentialsMsg()) {
+        <div class="alert alert-danger" role="alert">
+            <p>{{ invalidCredentialsMsg() }}</p>
+        </div>
+        }
         <!-- Logout Success Message -->
         @if (hasLogout()) {
         <div class="alert alert-success" role="alert">

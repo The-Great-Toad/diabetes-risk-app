@@ -40,16 +40,10 @@ export class AuthService {
   }
 
   public logout() {
-    // this.http
-    //   .post('logout', {})
-    //   .pipe(
-    //     finalize(() => {
     this.isAuthenticated.set(false);
     this.token.set('');
+    localStorage.removeItem('token');
     this.router.navigateByUrl('/login', { state: { logout: true } });
-    // })
-    //   )
-    //   .subscribe();
   }
 
   private getToken(): string {

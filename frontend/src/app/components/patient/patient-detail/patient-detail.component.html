@@ -87,8 +87,9 @@
     </fieldset>
 </form>
 
-<hr>
-
 <!-- Patient Notes -->
+@if (!isUpdating()) {
+<hr>
 <app-notes-list [patient]="patient"></app-notes-list>
+}
 }
