@@ -53,24 +53,24 @@ services:
         depends_on:
             - mongodb
 
-    gateway-service:
-        build: ./gateway-service
-        container_name: gateway-service
-        ports:
-            - "8080:8080"
-        environment:
-            PATIENTS_SERVICE_URI: http://patient-service:8081
-            NOTES_SERVICE_URI: http://notes-service:8082
-        depends_on:
-            - patient-service
-            - notes-service
-    frontend:
-        build: ./frontend
-        container_name: frontend
-        ports:
-            - "4200:4200"
-        depends_on:
-            - gateway-service
+    # gateway-service:
+    #     build: ./gateway-service
+    #     container_name: gateway-service
+    #     ports:
+    #         - "8080:8080"
+    #     environment:
+    #         PATIENTS_SERVICE_URI: http://patient-service:8081
+    #         NOTES_SERVICE_URI: http://notes-service:8082
+    #     depends_on:
+    #         - patient-service
+    #         - notes-service
+    # frontend:
+    #     build: ./frontend
+    #     container_name: frontend
+    #     ports:
+    #         - "4200:4200"
+    #     depends_on:
+    #         - gateway-service
 #volumes:
 #    postgresql_data:
 #    mongodb_data:
