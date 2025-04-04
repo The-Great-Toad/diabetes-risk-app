@@ -15,7 +15,7 @@ import java.util.Objects;
 public class PatientServiceImpl implements PatientService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
-    private static final String LOG_ID = "[PatientService]";
+    private static final String LOG_PREFIX = "[PatientService]";
 
     private final PatientRepository patientRepository;
 
@@ -23,11 +23,11 @@ public class PatientServiceImpl implements PatientService {
 
     public PatientServiceImpl(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
-        patientRepository.saveAll(patients);
+//        patientRepository.saveAll(patients);
     }
 
     static {
-        LOGGER.info(LOG_ID + " - Patient Service Initialized");
+        LOGGER.info(LOG_PREFIX + " - Patient Service Initialized");
         Patient patient = Patient.builder()
                 .lastName("TestNone")
                 .firstName("Test")
@@ -95,10 +95,10 @@ public class PatientServiceImpl implements PatientService {
         String error;
         try {
             int id = Integer.parseInt(identification);
-            error = String.format("%s - Patient with id %d not found", LOG_ID, id);
+            error = String.format("%s - Patient with id %d not found", LOG_PREFIX, id);
 
         } catch (NumberFormatException e) {
-            error = String.format("%s - Patient, %s, doesn't exist", LOG_ID,identification);
+            error = String.format("%s - Patient, %s, doesn't exist", LOG_PREFIX,identification);
         }
 
         LOGGER.error(error);

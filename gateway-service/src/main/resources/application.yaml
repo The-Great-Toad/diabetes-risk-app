@@ -45,6 +45,12 @@ spring:
             - Path=/patients/**
           filters:
             - PrefixPath=/api
+        - id: notes-route
+          uri: ${NOTES_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/notes/**
+          filters:
+            - PrefixPath=/api
 
 # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/troubleshooting.html
 logging:

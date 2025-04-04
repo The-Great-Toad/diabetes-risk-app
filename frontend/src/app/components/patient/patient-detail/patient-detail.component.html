@@ -1,3 +1,5 @@
+<h2>Patient informations</h2>
+
 <!-- Spinner -->
 @if (isLoading()) {
 <mat-progress-bar mode="query"></mat-progress-bar>
@@ -5,9 +7,9 @@
 
 <!-- Patient Form -->
 @if (patient) {
-<form>
+<form class="mt-3">
     <fieldset [disabled]="!isUpdating()">
-        <legend>{{ patient.firstname }} {{ patient.lastname }}</legend>
+        <!-- <legend>{{ patient.firstname }} {{ patient.lastname }}</legend> -->
         <!-- Lastname & Firstname-->
         <div class="row g-2">
             <div class="col-md-6">
@@ -84,4 +86,10 @@
         }
     </fieldset>
 </form>
+
+<!-- Patient Notes -->
+@if (!isUpdating()) {
+<hr>
+<app-notes-list [patient]="patient"></app-notes-list>
+}
 }

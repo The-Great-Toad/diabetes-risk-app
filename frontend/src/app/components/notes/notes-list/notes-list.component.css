@@ -1,0 +1,22 @@
+.notes-container {
+  display: flex;
+  align-items: center;
+}
+
+fa-icon {
+  margin-right: 1rem;
+}
+
+mat-list-item {
+  height: fit-content !important;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+p {
+  padding-top: 1rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

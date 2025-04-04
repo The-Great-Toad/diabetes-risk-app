@@ -4,7 +4,7 @@ import { PatientService } from '../../../services/patient.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -27,7 +27,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class PatientListComponent implements OnInit {
   private patientService: PatientService = inject(PatientService);
   private router: Router = inject(Router);
-  private route: ActivatedRoute = inject(ActivatedRoute);
 
   public isLoading = signal<boolean>(false);
   public isUpdateSuccessful = signal<boolean>(false);
