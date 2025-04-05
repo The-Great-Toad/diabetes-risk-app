@@ -51,6 +51,12 @@ spring:
             - Path=/notes/**
           filters:
             - PrefixPath=/api
+        - id: risk-assessment-route
+          uri: ${RISK_ASSESSMENT_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/risk-assessment/**
+          filters:
+            - PrefixPath=/api
 
 # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/troubleshooting.html
 logging:

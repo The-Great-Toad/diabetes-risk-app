@@ -1,4 +1,4 @@
-CREATE TABLE patient (
+CREATE TABLE IF NOT EXISTS patient (
     id INT PRIMARY KEY,
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
@@ -6,4 +6,4 @@ CREATE TABLE patient (
     gender VARCHAR(1) NOT NULL,
     address VARCHAR(255),
     phone VARCHAR(12)
-)
+);

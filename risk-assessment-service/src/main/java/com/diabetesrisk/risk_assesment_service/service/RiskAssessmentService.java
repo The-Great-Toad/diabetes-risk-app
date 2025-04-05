@@ -65,8 +65,11 @@ public class RiskAssessmentService {
      * @return The Patient object containing the patient's details.
      */
     private Patient getPatient(String patientId) {
+        log.info("Fetching patient details for ID: {}", patientId);
+        String uri = String.format("/patients/risk-assessment/%s", patientId);
+
         return patientClient.get()
-                .uri("/patients/" + patientId)
+                .uri(uri)
                 .retrieve()
                 .bodyToMono(Patient.class)
                 .block();
