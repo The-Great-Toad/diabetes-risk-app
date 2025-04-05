@@ -59,8 +59,8 @@ services:
         ports:
             - "8083:8083"
         environment:
-            SPRING_PATIENT_CLIENT_URL: http://patient-service:8081
-            SPRING_NOTES_CLIENT_URL: http://notes-service:8082
+            SPRING_PATIENT_CLIENT_URL: http://patient-service:8081/api
+            SPRING_NOTES_CLIENT_URL: http://notes-service:8082/api
         depends_on:
             - patient-service
             - notes-service
@@ -73,6 +73,7 @@ services:
         environment:
             PATIENTS_SERVICE_URI: http://patient-service:8081
             NOTES_SERVICE_URI: http://notes-service:8082
+            RISK_ASSESSMENT_SERVICE_URI: http://risk-assessment-service:8083
         depends_on:
             - patient-service
             - notes-service

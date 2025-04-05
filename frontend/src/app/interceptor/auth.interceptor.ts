@@ -5,18 +5,17 @@ import { inject } from '@angular/core';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authenticationService = inject(AuthService);
   const token = authenticationService.token();
-
-  console.log('auth interceptor - token', token);
+  //   console.log('auth interceptor - token', token);
 
   if (!token) {
     return next(req);
   }
 
   const headers = new HttpHeaders({ Authorization: token });
-  console.log('auth interceptor - headers', headers);
+  //   console.log('auth interceptor - headers', headers);
 
   const newReq = req.clone({ headers });
-  console.log('auth interceptor - newReq', newReq);
+  //   console.log('auth interceptor - newReq', newReq);
 
   return next(newReq);
 };

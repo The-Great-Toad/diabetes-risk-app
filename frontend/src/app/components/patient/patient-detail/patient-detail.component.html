@@ -1,4 +1,11 @@
-<h2>Patient informations</h2>
+<section class="d-flex justify-content-between align-items-center">
+    <h2>Patient informations</h2>
+
+    <!-- Patient diabetes risk level -->
+    @if (!isUpdating()) {
+    <app-risk-assessment [id]="patientId"></app-risk-assessment>
+    }
+</section>
 
 <!-- Spinner -->
 @if (isLoading()) {
