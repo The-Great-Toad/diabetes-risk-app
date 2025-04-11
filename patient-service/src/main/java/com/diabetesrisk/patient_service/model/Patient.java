@@ -27,8 +27,8 @@ public class Patient {
     @Column
     private String address;
 
-    @Column(name = "phonenumber")
-    private String phoneNumber;
+    @Column
+    private String phone;
 
     public String getFullName() {
         return firstname + " " + lastname;
@@ -82,12 +82,12 @@ public class Patient {
         this.address = address;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phoneNumber) {
+        this.phone = phoneNumber;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class Patient {
                 .add("birthDate='" + birthDate + "'")
                 .add("gender='" + gender + "'")
                 .add("address='" + address + "'")
-                .add("phoneNumber='" + phoneNumber + "'")
+                .add("phone='" + phone + "'")
                 .toString();
     }
 
@@ -132,8 +132,8 @@ public class Patient {
         return this;
     }
 
-    public Patient phoneNumber(String phonenumber) {
-        setPhoneNumber(phonenumber);
+    public Patient phone(String phone) {
+        setPhone(phone);
         return this;
     }
 

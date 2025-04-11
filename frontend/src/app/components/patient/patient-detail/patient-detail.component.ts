@@ -17,6 +17,7 @@ import moment, { Moment } from 'moment';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { NotesListComponent } from '../../notes/notes-list/notes-list.component';
+import { RiskAssessmentComponent } from '../../risk-assessment/risk-assessment.component';
 
 @Component({
   selector: 'app-patient-detail',
@@ -29,6 +30,7 @@ import { NotesListComponent } from '../../notes/notes-list/notes-list.component'
     MatButtonModule,
     MatProgressBarModule,
     NotesListComponent,
+    RiskAssessmentComponent,
   ],
   templateUrl: './patient-detail.component.html',
   styleUrl: './patient-detail.component.css',
@@ -43,16 +45,23 @@ export class PatientDetailComponent implements OnDestroy {
   public isConsulting = signal<boolean>(false);
   public action = signal<string>('');
   public hasDateOfBirthChanged = signal<boolean>(false);
+  public patientId!: number;
 
   private patient$!: Subscription;
   private subscription: Subscription[] = [];
 
   @Input()
   set id(id: number) {
-    this.patient$ = this.patientService.getPatient(id).subscribe((patient) => {
-      this.patient = patient;
-      console.log(`${this.action()} patient: ${this.patient}`);
-      this.isLoading.set(false);
+    this.patientId = id;
+    this.patient$ = this.patientService.getPatient(id).subscribe({
+      next: (patient: Patient) => {
+        this.patient = patient;
+        this.isLoading.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error(error);
+        this.isLoading.set(false);
+      },
     });
     this.subscription.push(this.patient$);
   }

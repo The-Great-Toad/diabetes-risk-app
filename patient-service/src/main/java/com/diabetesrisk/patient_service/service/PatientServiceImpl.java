@@ -1,6 +1,7 @@
 package com.diabetesrisk.patient_service.service;
 
 import com.diabetesrisk.patient_service.model.Patient;
+import com.diabetesrisk.patient_service.model.PatientDto;
 import com.diabetesrisk.patient_service.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -8,59 +9,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 public class PatientServiceImpl implements PatientService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
-    private static final String LOG_PREFIX = "[PatientService]";
+    private static final Logger log = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     private final PatientRepository patientRepository;
 
-    private static final List<Patient> patients;
 
     public PatientServiceImpl(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
-//        patientRepository.saveAll(patients);
-    }
-
-    static {
-        LOGGER.info(LOG_PREFIX + " - Patient Service Initialized");
-        Patient patient = Patient.builder()
-                .lastName("TestNone")
-                .firstName("Test")
-                .birthDate("1966-12-31")
-                .gender("F")
-                .address("1 Brookside St")
-                .phoneNumber("100-222-3333");
-
-        Patient patient2 = Patient.builder()
-                .lastName("TestBorderline")
-                .firstName("Test")
-                .birthDate("1945-06-24")
-                .gender("M")
-                .address("2 High St")
-                .phoneNumber("200-333-4444");
-
-        Patient patient3 = Patient.builder()
-                .lastName("TestInDanger")
-                .firstName("Test")
-                .birthDate("2004-06-18")
-                .gender("M")
-                .address("3 Club Road")
-                .phoneNumber("300-444-5555");
-
-        Patient patient4 = Patient.builder()
-                .lastName("TestEarlyOnset")
-                .firstName("Test")
-                .birthDate("2002-06-28")
-                .gender("F")
-                .address("4 Valley Dr")
-                .phoneNumber("400-555-6666");
-
-        patients = List.of(patient, patient2, patient3, patient4);
     }
 
     @Override
@@ -70,38 +34,78 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Patient getPatient(int id) {
-        /* Error */
-        if (patientRepository.findById(id).isEmpty()) {
-            throwPatientNotFoundExcetion(Integer.toString(id));
-        }
-
-        return patientRepository.findById(id).get();
+        log.info("Retrieving patient with id {}...", id);
+        return patientRepository.findById(id).orElseThrow();
     }
 
     @Override
     public Patient savePatient(Patient patient) {
+        log.info("Saving patient {}", patient);
         return patientRepository.save(patient);
     }
 
     @Override
     public Patient updatePatient(Patient patient) {
-        if (Objects.isNull(patient.getId())) {
-            throwPatientNotFoundExcetion(patient.getFullName());
+        log.info("Updating patient {}", patient);
+
+        try {
+            Patient existingPatient = getPatient(patient.getId());
+            log.info("Existing patient found: {}", existingPatient);
+
+        } catch (EntityNotFoundException e) {
+            log.error("Patient with id {} not found", patient.getId());
+            throw new EntityNotFoundException("Patient not found");
         }
+
         return patientRepository.save(patient);
     }
 
-    private void throwPatientNotFoundExcetion(String identification) throws EntityNotFoundException {
-        String error;
-        try {
-            int id = Integer.parseInt(identification);
-            error = String.format("%s - Patient with id %d not found", LOG_PREFIX, id);
+    @Override
+    public PatientDto getPatientDto(Integer id) {
+        log.info("Retrieving patient DTO with id {}...", id);
+        return mapToPatientDto(getPatient(id));
+    }
 
-        } catch (NumberFormatException e) {
-            error = String.format("%s - Patient, %s, doesn't exist", LOG_PREFIX,identification);
+    /**
+     * Map a Patient to a PatientDto.
+     */
+    private PatientDto mapToPatientDto(Patient patient) {
+        return PatientDto.builder()
+                .id(patient.getId())
+                .age(calculatePatientAge(patient.getBirthDate()))
+                .gender(patient.getGender());
+    }
+
+    /**
+     * Calculate the age of a patient based on their birthdate.
+     *
+     * @param birthDate the birthdate of the patient
+     * @return the age of the patient
+     */
+    private int calculatePatientAge(String birthDate) {
+        log.info("Calculating patient age for {}", birthDate);
+
+        if (Objects.isNull(birthDate)) {
+            log.error("Birthdate is null");
+            throw new IllegalArgumentException("Birthdate cannot be null");
         }
 
-        LOGGER.error(error);
-        throw new EntityNotFoundException(error);
+        try {
+            LocalDate patientBirthDate = LocalDate.parse(birthDate);
+            LocalDate now = LocalDate.now();
+            int age = now.getYear() - patientBirthDate.getYear();
+
+            if (now.getDayOfYear() < patientBirthDate.getDayOfYear()) {
+                age--;
+            }
+
+            log.info("Patient birthdate {}, current date {} - Patient age is {}", patientBirthDate, now, age);
+
+            return age;
+
+        } catch (DateTimeParseException e) {
+            log.error("Invalid birthdate format: {}", birthDate);
+            throw new IllegalArgumentException("Invalid birthdate format");
+        }
     }
 }

@@ -55,7 +55,6 @@ export class PatientListComponent implements OnInit {
 
   constructor() {
     const navigation = this.router.getCurrentNavigation();
-    console.log('navigation: ', navigation);
 
     if (navigation?.extras?.state) {
       /* check for update */
@@ -75,7 +74,6 @@ export class PatientListComponent implements OnInit {
 
     this.patientService.getPatients().subscribe((patients: Patient[]) => {
       this.patients = patients;
-      console.log('patients: ', patients);
       this.isLoading.set(false);
       this.initDataSource();
     });
@@ -84,17 +82,15 @@ export class PatientListComponent implements OnInit {
   private initDataSource(): void {
     this.dataSource = new MatTableDataSource<Patient>(this.patients);
     this.dataSource.paginator = this.paginator();
-    console.log('paginator: ', this.paginator());
-    console.log('datasource: ', this.dataSource);
   }
 
   public onEdit(patient: Patient): void {
-    console.log('edit: ', patient);
+    // console.log('edit: ', patient);
     this.router.navigate(['patients/form', patient.id]);
   }
 
   public onView(patient: Patient): void {
-    console.log('view: ', patient);
+    // console.log('view: ', patient);
     this.router.navigate(['patients/detail', patient.id]);
   }
 }

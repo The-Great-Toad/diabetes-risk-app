@@ -1,6 +1,7 @@
 package com.diabetesrisk.patient_service.controller;
 
 import com.diabetesrisk.patient_service.model.Patient;
+import com.diabetesrisk.patient_service.model.PatientDto;
 import com.diabetesrisk.patient_service.service.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class PatientController {
     @GetMapping("/{id}")
     public ResponseEntity<Patient> getPatient(@PathVariable Integer id) {
         return ResponseEntity.ok(patientService.getPatient(id));
+    }
+
+    @GetMapping("/risk-assessment/{id}")
+    public ResponseEntity<PatientDto> getPatientDto(@PathVariable Integer id) {
+        return ResponseEntity.ok(patientService.getPatientDto(id));
     }
 
     @PostMapping
