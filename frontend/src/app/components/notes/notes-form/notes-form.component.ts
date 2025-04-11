@@ -32,11 +32,7 @@ export class NotesFormComponent implements OnDestroy {
   public patient = input<Patient>({} as Patient);
   public noteAdded = output<Note | null>();
 
-  public newNote = signal<Note>({
-    patientId: this.patient().id,
-    patient: this.patient().lastname,
-    note: '',
-  } as Note);
+  public newNote = signal<Note>({} as Note);
   public isLoading = signal<boolean>(false);
 
   private notes$!: Subscription;
@@ -48,8 +44,8 @@ export class NotesFormComponent implements OnDestroy {
 
   public addNote() {
     this.isLoading.set(true);
-
-    this.newNote().date = new Date().toISOString();
+    this.completeNewNote();
+    console.log('Adding note:', this.newNote());
 
     this.notes$ = this.noteService.addNote(this.newNote()).subscribe({
       next: (note) => {
@@ -63,6 +59,15 @@ export class NotesFormComponent implements OnDestroy {
       },
     });
     this.subscriptions.push(this.notes$);
+  }
+
+  private completeNewNote() {
+    this.newNote.set({
+      ...this.newNote(),
+      patientId: this.patient().id,
+      patient: this.patient().lastname,
+      date: new Date().toISOString(),
+    } as Note);
   }
 
   public cancelNewNote() {

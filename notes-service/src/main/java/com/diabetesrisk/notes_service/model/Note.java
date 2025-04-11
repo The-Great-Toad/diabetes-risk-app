@@ -19,6 +19,15 @@ public class Note {
 
     private String note;
 
+    public Note() {
+    }
+
+    public Note(Integer patientId, String patient, Date date, String note) {
+        this.patientId = patientId;
+        this.patient = patient;
+        this.date = date;
+        this.note = note;
+    }
 
     public String getId() {
         return id;
