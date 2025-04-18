@@ -118,7 +118,7 @@ class NoteControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(note)))
                     .andDo(print())
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.patientId").value(1))
                     .andExpect(jsonPath("$.note").value("New Note"));
 

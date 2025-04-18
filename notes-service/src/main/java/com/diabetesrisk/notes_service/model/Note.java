@@ -1,5 +1,6 @@
 package com.diabetesrisk.notes_service.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -11,18 +12,23 @@ import java.time.LocalDate;
 @Document(collection = "notes")
 public class Note {
 
+    @Schema(description = "Unique identifier for the note", example = "123-456-789")
     @Id
     private String id;
 
+    @Schema(description = "Unique identifier for the patient", example = "1")
     @NotNull(message = "Patient ID cannot be null")
     @Min(value = 1, message = "Patient ID must be greater than 0")
     private Integer patientId;
 
+    @Schema(description = "Name of the patient", example = "John Doe")
     @NotEmpty(message = "Patient name cannot be empty")
     private String patient;
 
+    @Schema(description = "Date of the note", example = "2023-10-01")
     private LocalDate date;
 
+    @Schema(description = "Content of the note", example = "Patient is doing well.")
     @NotEmpty(message = "Note cannot be empty")
     private String note;
 
