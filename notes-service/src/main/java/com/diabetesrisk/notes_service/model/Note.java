@@ -1,9 +1,12 @@
 package com.diabetesrisk.notes_service.model;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Document(collection = "notes")
 public class Note {
@@ -11,18 +14,22 @@ public class Note {
     @Id
     private String id;
 
+    @NotNull(message = "Patient ID cannot be null")
+    @Min(value = 1, message = "Patient ID must be greater than 0")
     private Integer patientId;
 
+    @NotEmpty(message = "Patient name cannot be empty")
     private String patient;
 
-    private Date date;
+    private LocalDate date;
 
+    @NotEmpty(message = "Note cannot be empty")
     private String note;
 
     public Note() {
     }
 
-    public Note(Integer patientId, String patient, Date date, String note) {
+    public Note(Integer patientId, String patient, LocalDate date, String note) {
         this.patientId = patientId;
         this.patient = patient;
         this.date = date;
@@ -53,11 +60,11 @@ public class Note {
         this.patient = patient;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -94,7 +101,7 @@ public class Note {
         return this;
     }
 
-    public Note date(Date date) {
+    public Note date(LocalDate date) {
         this.date = date;
         return this;
     }

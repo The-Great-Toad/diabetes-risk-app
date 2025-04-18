@@ -2,6 +2,7 @@ package com.diabetesrisk.risk_assesment_service.model;
 
 public enum RiskLevel {
 
+    // ajouter NO_NOTES enum
     /**
      * patient's notes doesn't contains any triggers
      */

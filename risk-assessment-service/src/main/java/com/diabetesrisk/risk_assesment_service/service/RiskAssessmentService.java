@@ -1,6 +1,7 @@
 package com.diabetesrisk.risk_assesment_service.service;
 
 import com.diabetesrisk.risk_assesment_service.io.DiabetesTriggerReader;
+import com.diabetesrisk.risk_assesment_service.model.Note;
 import com.diabetesrisk.risk_assesment_service.model.Patient;
 import com.diabetesrisk.risk_assesment_service.model.RiskLevel;
 import org.slf4j.Logger;
