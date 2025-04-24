@@ -1,19 +1,30 @@
 package com.diabetesrisk.risk_assesment_service.model;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class Patient {
 
-    private String id;
+    @NotNull(message = "Patient ID cannot be null")
+    @Min(value = 1, message = "Patient ID must be greater than 0")
+    private int id;
 
+    @NotNull(message = "Age cannot be null")
+    @Min(value = 1, message = "Patient ID must be greater than 0")
+    @Max(value = 120, message = "Patient ID must be less than 120")
     private int age;
 
+    @NotBlank(message = "Patient gender cannot be blank")
     private String gender;
 
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -47,7 +58,7 @@ public class Patient {
         return new Patient();
     }
 
-    public Patient id(String id) {
+    public Patient id(int id) {
         this.id = id;
         return this;
     }
