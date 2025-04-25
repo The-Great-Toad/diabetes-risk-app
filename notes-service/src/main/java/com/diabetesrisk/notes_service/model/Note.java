@@ -1,28 +1,41 @@
 package com.diabetesrisk.notes_service.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Document(collection = "notes")
 public class Note {
 
+    @Schema(description = "Unique identifier for the note", example = "123-456-789")
     @Id
     private String id;
 
+    @Schema(description = "Unique identifier for the patient", example = "1")
+    @NotNull(message = "Patient ID cannot be null")
+    @Min(value = 1, message = "Patient ID must be greater than 0")
     private Integer patientId;
 
+    @Schema(description = "Name of the patient", example = "John Doe")
+    @NotEmpty(message = "Patient name cannot be empty")
     private String patient;
 
-    private Date date;
+    @Schema(description = "Date of the note", example = "2023-10-01")
+    private LocalDate date;
 
+    @Schema(description = "Content of the note", example = "Patient is doing well.")
+    @NotEmpty(message = "Note cannot be empty")
     private String note;
 
     public Note() {
     }
 
-    public Note(Integer patientId, String patient, Date date, String note) {
+    public Note(Integer patientId, String patient, LocalDate date, String note) {
         this.patientId = patientId;
         this.patient = patient;
         this.date = date;
@@ -53,11 +66,11 @@ public class Note {
         this.patient = patient;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -94,7 +107,7 @@ public class Note {
         return this;
     }
 
-    public Note date(Date date) {
+    public Note date(LocalDate date) {
         this.date = date;
         return this;
     }

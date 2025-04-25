@@ -1,6 +1,9 @@
 package com.diabetesrisk.patient_service.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.StringJoiner;
 
@@ -10,18 +13,25 @@ public class Patient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Min(1)
     private Integer id;
 
     @Column
+    @NotBlank(message = "Firstname is mandatory")
     private String firstname;
 
     @Column
+    @NotBlank(message = "Lastname is mandatory")
     private String lastname;
 
     @Column(name = "birthdate")
+    @NotBlank(message = "Birthdate is mandatory")
+    @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "Birthdate must be in the format YYYY-MM-DD")
     private String birthDate;
 
     @Column
+    @NotBlank(message = "Gender is mandatory")
+    @Pattern(regexp = "[F-M]", message = "Gender must be either 'F' or 'M'")
     private String gender;
 
     @Column
@@ -107,12 +117,17 @@ public class Patient {
         return new Patient();
     }
 
-    public Patient lastName(String lastname) {
+    public Patient id(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    public Patient lastname(String lastname) {
         setLastname(lastname);
         return this;
     }
 
-    public Patient firstName(String firstname) {
+    public Patient firstname(String firstname) {
         setFirstname(firstname);
         return this;
     }

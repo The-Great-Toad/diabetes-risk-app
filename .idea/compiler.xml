@@ -3,20 +3,23 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
-      <profile name="Annotation profile for patient-service" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$USER_HOME$/Documents/dev-tools/maven/repository/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
-        </processorPath>
         <module name="patient-service" />
+        <module name="notes-service" />
+        <module name="risk-assesment-service" />
+        <module name="gateway-service" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="gateway-service" options="-parameters" />
+      <module name="notes-service" options="-parameters" />
       <module name="patient-service" options="-parameters" />
+      <module name="risk-assesment-service" options="-parameters" />
     </option>
   </component>
 </project>

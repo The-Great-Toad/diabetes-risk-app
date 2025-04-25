@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class DiabetesTriggerReader {
@@ -29,15 +31,19 @@ public class DiabetesTriggerReader {
 	@PostConstruct
 	public void init() {
 		log.info("Reading triggers from file: {}", fileName);
-		if (fileName != null) {
-			try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-				String line = reader.readLine();
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
 
+		if (Objects.isNull(inputStream)) {
+			log.info("No data found in file: {}", fileName);
+
+		} else {
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+				String line = reader.readLine();
 				while (line != null) {
 					triggers.add(line.toLowerCase());
 					line = reader.readLine();
 				}
-			} catch (IOException e) {
+			} catch (IOException | NullPointerException e) {
 				log.error("Error reading triggers from file: {}", fileName, e);
 			}
 		}

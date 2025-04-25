@@ -1,4 +1,4 @@
-package com.diabetesrisk.risk_assesment_service.service;
+package com.diabetesrisk.risk_assesment_service.model;
 
 public class Note {
 

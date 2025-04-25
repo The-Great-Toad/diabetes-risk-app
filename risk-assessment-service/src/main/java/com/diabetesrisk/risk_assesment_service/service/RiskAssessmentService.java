@@ -1,6 +1,7 @@
 package com.diabetesrisk.risk_assesment_service.service;
 
 import com.diabetesrisk.risk_assesment_service.io.DiabetesTriggerReader;
+import com.diabetesrisk.risk_assesment_service.model.Note;
 import com.diabetesrisk.risk_assesment_service.model.Patient;
 import com.diabetesrisk.risk_assesment_service.model.RiskLevel;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class RiskAssessmentService {
@@ -19,12 +21,13 @@ public class RiskAssessmentService {
 
     private final WebClient notesClient;
 
-    private final List<String> triggers;
+    private final DiabetesTriggerReader diabetesReader;
+
 
     public RiskAssessmentService(WebClient patientClient, WebClient notesClient, DiabetesTriggerReader diabetesReader) {
         this.patientClient = patientClient;
         this.notesClient = notesClient;
-        this.triggers = diabetesReader.getTriggers();
+        this.diabetesReader = diabetesReader;
     }
 
     /**
@@ -33,13 +36,13 @@ public class RiskAssessmentService {
      * @param patientId The ID of the patient for whom to calculate the risk assessment.
      * @return A string representing the risk assessment result.
      */
-    public RiskLevel getRiskAssessment(String patientId) {
+    public RiskLevel getRiskAssessment(int patientId) {
         log.info("Fetching risk assessment for patient ID: {}", patientId);
 
         /* Fetch patient */
         Patient patient = getPatient(patientId);
 
-        if (patient == null) {
+        if (Objects.isNull(patient)) {
             log.error("Patient not found for ID: {}", patientId);
             return null;
         }
@@ -48,9 +51,12 @@ public class RiskAssessmentService {
         /* Fetch notes */
         List<Note> notes = getNotes(patientId);
 
-        if (notes == null) {
+        if (Objects.isNull(notes)) {
             log.error("No notes found for patient ID: {}", patientId);
             return null;
+        } else if (notes.isEmpty()) {
+            log.info("Empty notes for patient ID: {}", patientId);
+            return RiskLevel.NONE;
         }
         log.info("Notes for patient ID {}: {}", patientId, notes);
 
@@ -64,7 +70,7 @@ public class RiskAssessmentService {
      * @param patientId The ID of the patient to fetch.
      * @return The Patient object containing the patient's details.
      */
-    private Patient getPatient(String patientId) {
+    private Patient getPatient(int patientId) {
         log.info("Fetching patient details for ID: {}", patientId);
         String uri = String.format("/patients/risk-assessment/%s", patientId);
 
@@ -81,7 +87,7 @@ public class RiskAssessmentService {
      * @param patientId The ID of the patient whose notes to fetch.
      * @return A list of Note objects containing the patient's notes.
      */
-    private List<Note> getNotes(String patientId) {
+    private List<Note> getNotes(int patientId) {
         return notesClient.get()
                 .uri("/notes/" + patientId)
                 .retrieve()
@@ -98,11 +104,6 @@ public class RiskAssessmentService {
      * @return A RiskAssessment object containing the calculated risk assessment.
      */
     private RiskLevel calculateRiskAssessment(Patient patient, List<Note> notes) {
-        if (notes.isEmpty()) {
-            log.info("No notes found for patient ID: {}", patient.getId());
-            return RiskLevel.NONE;
-        }
-
         RiskLevel riskLevel;
         int triggerCount = calculateTriggerCount(notes);
 
@@ -123,12 +124,16 @@ public class RiskAssessmentService {
                         default -> riskLevel = RiskLevel.EARLY_ONSET;
                     }
                 }
-                default -> throw new IllegalArgumentException("Invalid gender");
+                default -> {
+                    final String errorMsg = String.format("Invalid gender: %s", patient.getGender());
+                    log.error(errorMsg);
+                    throw new IllegalArgumentException(errorMsg);
+                }
             }
         } else {
             log.info("Patient age: {} is above 30 years", patient.getAge());
             switch (triggerCount) {
-                case 0 -> riskLevel = RiskLevel.NONE;
+                case 0,1 -> riskLevel = RiskLevel.NONE;
                 case 2,3,4,5 -> riskLevel = RiskLevel.BORDERLINE;
                 case 6,7 -> riskLevel = RiskLevel.IN_DANGER;
                 default -> riskLevel = RiskLevel.EARLY_ONSET;
@@ -147,6 +152,12 @@ public class RiskAssessmentService {
      */
     private int calculateTriggerCount(List<Note> notes) {
         int triggerCount = 0;
+        List<String> triggers = diabetesReader.getTriggers()
+                .stream()
+                .map(String::toLowerCase)
+                .toList();
+        log.info("Triggers: {}", triggers);
+
         for (Note note : notes) {
             List<String> noteWords = List.of(note.getNote().split(" "));
             log.info("Note words: {}", noteWords);
