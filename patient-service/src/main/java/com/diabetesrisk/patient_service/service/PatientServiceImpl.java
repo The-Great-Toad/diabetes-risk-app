@@ -10,10 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class PatientServiceImpl implements PatientService {
@@ -22,10 +19,10 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
 
-
     public PatientServiceImpl(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
     }
+
 
     @Override
     public List<Patient> getPatients() {
@@ -35,7 +32,13 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Patient getPatient(int id) {
         log.info("Retrieving patient with id {}...", id);
-        return patientRepository.findById(id).orElseThrow();
+
+        if (patientRepository.findById(id).isEmpty()) {
+            throwPatientNotFoundException(id);
+        }
+
+        log.info("Patient with id {} found, retrieving...", id);
+        return patientRepository.findById(id).get();
     }
 
     @Override
@@ -48,22 +51,24 @@ public class PatientServiceImpl implements PatientService {
     public Patient updatePatient(Patient patient) {
         log.info("Updating patient {}", patient);
 
-        try {
-            Patient existingPatient = getPatient(patient.getId());
-            log.info("Existing patient found: {}", existingPatient);
-
-        } catch (EntityNotFoundException e) {
-            log.error("Patient with id {} not found", patient.getId());
-            throw new EntityNotFoundException("Patient not found");
+        if (!patientRepository.existsById(patient.getId())) {
+            throwPatientNotFoundException(patient.getId());
         }
 
+        log.info("Patient with id {} found, updating...", patient.getId());
         return patientRepository.save(patient);
     }
 
     @Override
     public PatientDto getPatientDto(Integer id) {
         log.info("Retrieving patient DTO with id {}...", id);
-        return mapToPatientDto(getPatient(id));
+
+        if (patientRepository.findById(id).isEmpty()) {
+            throwPatientNotFoundException(id);
+        }
+
+        log.info("Patient with id {} found, retrieving DTO...", id);
+        return mapToPatientDto(patientRepository.findById(id).get());
     }
 
     /**
@@ -85,27 +90,20 @@ public class PatientServiceImpl implements PatientService {
     private int calculatePatientAge(String birthDate) {
         log.info("Calculating patient age for {}", birthDate);
 
-        if (Objects.isNull(birthDate)) {
-            log.error("Birthdate is null");
-            throw new IllegalArgumentException("Birthdate cannot be null");
+        LocalDate patientBirthDate = LocalDate.parse(birthDate);
+        LocalDate now = LocalDate.now();
+        int age = now.getYear() - patientBirthDate.getYear();
+
+        if (now.getDayOfYear() < patientBirthDate.getDayOfYear()) {
+            age--;
         }
+        log.info("Patient birthdate {}, current date {} - Patient age is {}", patientBirthDate, now, age);
 
-        try {
-            LocalDate patientBirthDate = LocalDate.parse(birthDate);
-            LocalDate now = LocalDate.now();
-            int age = now.getYear() - patientBirthDate.getYear();
+        return age;
+    }
 
-            if (now.getDayOfYear() < patientBirthDate.getDayOfYear()) {
-                age--;
-            }
-
-            log.info("Patient birthdate {}, current date {} - Patient age is {}", patientBirthDate, now, age);
-
-            return age;
-
-        } catch (DateTimeParseException e) {
-            log.error("Invalid birthdate format: {}", birthDate);
-            throw new IllegalArgumentException("Invalid birthdate format");
-        }
+    private static void throwPatientNotFoundException(int id) {
+        log.error("Patient with id {} not found", id);
+        throw new EntityNotFoundException("Patient not found");
     }
 }

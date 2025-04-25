@@ -1,5 +1,6 @@
-package com.diabetesrisk.risk_assesment_service.configuration;
+package com.diabetesrisk.patient_service.configuration;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +45,11 @@ public class GlobalExceptionHandler {
                         (msg1, msg2) -> msg1
                 ));
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }
