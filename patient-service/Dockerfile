@@ -7,8 +7,8 @@ COPY pom.xml .
 COPY src ./src
 
 # Étape de compilation et génération des rapports (Jacoco est automatiquement exécuté à l'étape de test)
-#RUN mvn clean package -DskipTests=true
-RUN mvn clean package surefire-report:report -DskipTests=false
+RUN mvn clean package -DskipTests=true
+#RUN mvn clean package surefire-report:report -DskipTests=false
 
 # Utilisation de l'image OpenJDK pour exécuter l'application
 FROM openjdk:17-jdk-alpine

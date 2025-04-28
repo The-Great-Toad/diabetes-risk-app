@@ -1,6 +1,7 @@
 package com.diabetesrisk.auth_service.controller;
 
 import com.diabetesrisk.auth_service.model.LoginRequest;
+import com.diabetesrisk.auth_service.model.LoginResponse;
 import com.diabetesrisk.auth_service.service.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
             return ResponseEntity.ok(jwtService.authenticateUser(request));
     }
 

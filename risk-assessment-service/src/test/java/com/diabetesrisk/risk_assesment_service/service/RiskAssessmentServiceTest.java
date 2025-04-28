@@ -158,6 +158,7 @@ class RiskAssessmentServiceTest {
     @Test
     void shouldThrowIllegalArgumentException_invalidGender() throws JsonProcessingException {
         Patient patient = new Patient().id(3).age(29).gender("S");
+        String token = "token";
         String note = String.join(" ", getTriggers());
 
         mockClientsResponse(patient, note);
@@ -165,7 +166,7 @@ class RiskAssessmentServiceTest {
         when(reader.getTriggers()).thenReturn(getTriggers());
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
-                () -> riskAssessmentService.getRiskAssessment(patient.getId())
+                () -> riskAssessmentService.getRiskAssessment(patient.getId(), token)
         );
     }
 
@@ -223,12 +224,13 @@ class RiskAssessmentServiceTest {
     @Test
     void shouldReturnNullOnNullPatient() throws JsonProcessingException {
         int patientId = 8;
+        String token = "token";
 
         patientMockServer.enqueue(new MockResponse()
                 .setBody(objectMapper.writeValueAsString(null))
                 .addHeader("Content-Type", "application/json"));
 
-        RiskLevel result = riskAssessmentService.getRiskAssessment(patientId);
+        RiskLevel result = riskAssessmentService.getRiskAssessment(patientId, token);
 
         assertNull(result);
     }
@@ -270,7 +272,7 @@ class RiskAssessmentServiceTest {
             when(reader.getTriggers()).thenReturn(getTriggers());
         }
 
-        RiskLevel result = riskAssessmentService.getRiskAssessment(patient.getId());
+        RiskLevel result = riskAssessmentService.getRiskAssessment(patient.getId(), "token");
 
         assertNotNull(result);
         assertEquals(expected, result);

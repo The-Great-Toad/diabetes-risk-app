@@ -6,6 +6,7 @@ import com.diabetesrisk.risk_assesment_service.model.Patient;
 import com.diabetesrisk.risk_assesment_service.model.RiskLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -34,13 +35,14 @@ public class RiskAssessmentService {
      * This method calculates the risk assessment for a given patient ID.
      *
      * @param patientId The ID of the patient for whom to calculate the risk assessment.
+     * @param token     The JWT token for authentication.
      * @return A string representing the risk assessment result.
      */
-    public RiskLevel getRiskAssessment(int patientId) {
+    public RiskLevel getRiskAssessment(int patientId, String token) {
         log.info("Fetching risk assessment for patient ID: {}", patientId);
 
         /* Fetch patient */
-        Patient patient = getPatient(patientId);
+        Patient patient = getPatient(patientId, token);
 
         if (Objects.isNull(patient)) {
             log.error("Patient not found for ID: {}", patientId);
@@ -49,7 +51,7 @@ public class RiskAssessmentService {
         log.info("Patient details: {}", patient);
 
         /* Fetch notes */
-        List<Note> notes = getNotes(patientId);
+        List<Note> notes = getNotes(patientId, token);
 
         if (Objects.isNull(notes)) {
             log.error("No notes found for patient ID: {}", patientId);
@@ -70,12 +72,15 @@ public class RiskAssessmentService {
      * @param patientId The ID of the patient to fetch.
      * @return The Patient object containing the patient's details.
      */
-    private Patient getPatient(int patientId) {
+    private Patient getPatient(int patientId, String token) {
+        HttpHeaders headers = setWebClientHeaders(token);
+
         log.info("Fetching patient details for ID: {}", patientId);
         String uri = String.format("/patients/risk-assessment/%s", patientId);
 
         return patientClient.get()
                 .uri(uri)
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
                 .bodyToMono(Patient.class)
                 .block();
@@ -87,13 +92,23 @@ public class RiskAssessmentService {
      * @param patientId The ID of the patient whose notes to fetch.
      * @return A list of Note objects containing the patient's notes.
      */
-    private List<Note> getNotes(int patientId) {
+    private List<Note> getNotes(int patientId, String token) {
+        HttpHeaders headers = setWebClientHeaders(token);
+
         return notesClient.get()
                 .uri("/notes/" + patientId)
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
                 .bodyToFlux(Note.class)
                 .collectList()
                 .block();
+    }
+
+    private HttpHeaders setWebClientHeaders(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+        headers.set("X-User-Validated", "true");
+        return headers;
     }
 
     /**

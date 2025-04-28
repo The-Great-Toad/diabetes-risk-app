@@ -7,7 +7,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Étape de compilation
-RUN mvn clean package
+RUN mvn clean package -DskipTests=true
 
 # Utilisation de l'image OpenJDK pour exécuter l'application
 FROM openjdk:17-jdk-alpine

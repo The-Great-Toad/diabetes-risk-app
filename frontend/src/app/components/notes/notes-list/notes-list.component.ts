@@ -15,6 +15,7 @@ import { faNoteSticky, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NotesFormComponent } from '../notes-form/notes-form.component';
 import { Patient } from '../../../models/patient';
+import { CustomErrorResponse } from '../../../models/CustomErrorResponse';
 
 @Component({
   selector: 'app-notes-list',
@@ -53,8 +54,8 @@ export class NotesListComponent implements OnInit, OnDestroy {
           this.notes = notes;
           console.log(`Notes for patient ${this.patient().id}:`, this.notes);
         },
-        error: (error) => {
-          console.error('Error fetching notes:', error);
+        error: (error: CustomErrorResponse) => {
+          console.log('Error fetching notes:', error);
         },
       });
   }

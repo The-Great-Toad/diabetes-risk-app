@@ -8,4 +8,5 @@ export enum RiskColor {
   BORDERLINE = 'info',
   IN_DANGER = 'danger',
   EARLY_ONSET = 'warning',
+  DEFAULT = 'danger',
 }

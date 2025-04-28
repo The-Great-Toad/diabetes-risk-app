@@ -65,6 +65,12 @@ services:
             - patient-service
             - notes-service
 
+    auth-service:
+        build: ./auth-service
+        container_name: auth-service
+        ports:
+            - "8084:8084"
+
     gateway-service:
         build: ./gateway-service
         container_name: gateway-service
@@ -74,18 +80,20 @@ services:
             PATIENTS_SERVICE_URI: http://patient-service:8081
             NOTES_SERVICE_URI: http://notes-service:8082
             RISK_ASSESSMENT_SERVICE_URI: http://risk-assessment-service:8083
+            AUTH_SERVICE_URI: http://auth-service:8084
         depends_on:
             - patient-service
             - notes-service
             - risk-assessment-service
+            - auth-service
 
-    frontend:
-        build: ./frontend
-        container_name: frontend
-        ports:
-            - "4200:4200"
-        depends_on:
-            - gateway-service
+    # frontend:
+    #     build: ./frontend
+    #     container_name: frontend
+    #     ports:
+    #         - "4200:4200"
+    #     depends_on:
+    #         - gateway-service
 #volumes:
 #    postgresql_data:
 #    mongodb_data:

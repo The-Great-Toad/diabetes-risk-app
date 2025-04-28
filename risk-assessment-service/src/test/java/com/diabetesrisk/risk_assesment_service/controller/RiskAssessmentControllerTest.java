@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -50,7 +52,7 @@ class RiskAssessmentControllerTest {
             RiskLevel riskLevel = RiskLevel.NONE;
             String expectedResult = "NONE";
 
-            when(riskAssessmentService.getRiskAssessment(patientId)).thenReturn(riskLevel);
+            when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenReturn(riskLevel);
 
             mockMvc.perform(get("/risk-assessment/{patientId}", patientId))
                     .andDo(print())
@@ -64,7 +66,7 @@ class RiskAssessmentControllerTest {
             RiskLevel riskLevel = RiskLevel.BORDERLINE;
             String expectedResult = "BORDERLINE";
 
-            when(riskAssessmentService.getRiskAssessment(patientId)).thenReturn(riskLevel);
+            when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenReturn(riskLevel);
 
             mockMvc.perform(get("/risk-assessment/{patientId}", patientId))
                     .andDo(print())
@@ -78,7 +80,7 @@ class RiskAssessmentControllerTest {
             RiskLevel riskLevel = RiskLevel.IN_DANGER;
             String expectedResult = "IN_DANGER";
 
-            when(riskAssessmentService.getRiskAssessment(patientId)).thenReturn(riskLevel);
+            when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenReturn(riskLevel);
 
             mockMvc.perform(get("/risk-assessment/{patientId}", patientId))
                     .andDo(print())
@@ -92,7 +94,7 @@ class RiskAssessmentControllerTest {
             RiskLevel riskLevel = RiskLevel.EARLY_ONSET;
             String expectedResult = "EARLY_ONSET";
 
-            when(riskAssessmentService.getRiskAssessment(patientId)).thenReturn(riskLevel);
+            when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenReturn(riskLevel);
 
             mockMvc.perform(get("/risk-assessment/{patientId}", patientId))
                     .andDo(print())
@@ -106,7 +108,7 @@ class RiskAssessmentControllerTest {
         void shouldReturnBadRequestOnInvalidPatientId(int invalidPatientId) {
             ConstraintViolationException exception = new ConstraintViolationException("Invalid patient ID", null);
 
-            when(riskAssessmentService.getRiskAssessment(invalidPatientId)).thenThrow(exception);
+            when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenThrow(exception);
 
             assertThatExceptionOfType(ServletException.class)
                     .isThrownBy(() -> mockMvc

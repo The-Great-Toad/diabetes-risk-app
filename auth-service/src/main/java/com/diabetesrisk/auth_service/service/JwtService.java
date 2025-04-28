@@ -2,8 +2,10 @@ package com.diabetesrisk.auth_service.service;
 
 import com.diabetesrisk.auth_service.model.InvalidCredentialException;
 import com.diabetesrisk.auth_service.model.LoginRequest;
+import com.diabetesrisk.auth_service.model.LoginResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.MacAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +48,11 @@ public class JwtService {
      * @param request login request
      * @return JWT token
      */
-    public String authenticateUser(LoginRequest request) {
+    public LoginResponse authenticateUser(LoginRequest request) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
 
         if (Objects.nonNull(userDetails) && passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
-            return generateToken(userDetails);
+            return new LoginResponse(generateToken(userDetails));
 
         } else {
             throw new InvalidCredentialException();

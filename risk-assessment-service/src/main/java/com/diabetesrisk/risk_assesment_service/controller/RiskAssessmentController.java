@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,7 +44,7 @@ public class RiskAssessmentController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
     })
     @GetMapping("/{patientId}")
-    public RiskLevel getRiskAssessment(@PathVariable @Min(1) int patientId) {
-        return riskAssessmentService.getRiskAssessment(patientId);
+    public RiskLevel getRiskAssessment(@PathVariable @Min(1) int patientId, @RequestHeader("Authorization") String token) {
+        return riskAssessmentService.getRiskAssessment(patientId, token);
     }
 }

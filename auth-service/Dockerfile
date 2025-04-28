@@ -18,7 +18,7 @@ LABEL authors="ningo"
 COPY --from=build /app/target/*.jar app.jar
 
 # Exposer le port de l'application
-EXPOSE 8083
+EXPOSE 8084
 
 # Commande d'exécution
 ENTRYPOINT ["java", "-jar", "/app.jar"]

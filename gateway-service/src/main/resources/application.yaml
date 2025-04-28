@@ -35,10 +35,6 @@ spring:
 
 #      https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/starter.html:
       routes:
-        - id: authentication-route
-          uri: http://localhost:8080
-          predicates:
-            - Path=/login
         - id: patients-route
           uri: ${PATIENTS_SERVICE_URI:http://localhost:8081}
           predicates:
@@ -57,6 +53,23 @@ spring:
             - Path=/risk-assessment/**
           filters:
             - PrefixPath=/api
+        - id: auth-route
+          uri: ${AUTH_SERVICE_URI:http://localhost:8084}
+          predicates:
+            - Path=/auth/**
+          filters:
+            - PrefixPath=/api
+
+auth:
+  validation:
+    header: X-User-Validated
+  service:
+    base:
+      url: ${AUTH_SERVICE_URI:http://localhost:8084}
+    login:
+        uri: /api/auth/login
+    validate:
+      uri: /api/auth/validate
 
 # https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/troubleshooting.html
 logging:
