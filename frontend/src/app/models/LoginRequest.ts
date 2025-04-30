@@ -1,4 +1,4 @@
-export class Credentials {
+export class LoginRequest {
   username!: string;
   password!: string;
 }

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -26,10 +27,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
+                        .anyRequest().permitAll()
                 )
-                .httpBasic(withDefaults());
+                .addFilterBefore(new SecurityValidationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

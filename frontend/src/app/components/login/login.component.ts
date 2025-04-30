@@ -3,6 +3,7 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CustomErrorResponse } from '../../models/CustomErrorResponse';
 
 @Component({
   selector: 'app-login',
@@ -36,22 +37,19 @@ export class LoginComponent {
     this.invalidCredentialsMsg.set('');
 
     this.authenticationService.authenticate(this.credentials).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log('login response: ', res);
         this.router.navigateByUrl('/patients');
       },
-      error: (error: HttpErrorResponse) => {
+      error: (error: CustomErrorResponse) => {
         console.log('login error: ', error);
-        this.invalidCredentialsMsg.set(
-          'Invalid username or password. Please try again.'
-        );
-        // if (error.status === 401) {
-        //   this.invalidCredentialsMsg.set(
-        //     'Invalid username or password. Please try again.'
-        //   );
-        //   // TODO: not working, need to check why
-        // } else {
-        //   this.error.set(error.message);
-        // }
+        if (error.status === 401 || error.status === 403) {
+          this.invalidCredentialsMsg.set(
+            'Invalid username or password. Please try again.'
+          );
+        } else {
+          this.error.set(error.message);
+        }
       },
     });
   }

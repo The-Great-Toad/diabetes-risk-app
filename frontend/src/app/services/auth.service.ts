@@ -1,9 +1,9 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
-import { Credentials } from '../models/Credentials';
-import { L } from '@angular/cdk/keycodes';
+import { LoginRequest } from '../models/LoginRequest';
+import { LoginResponse } from '../models/LoginResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -12,28 +12,23 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private authenticationServiceBaseURL: string = 'http://localhost:8080';
+  private authServiceBaseUrl: string = 'http://localhost:8080';
+  private authServiceLoginUri: string = '/auth/login';
   public isAuthenticated = signal<boolean>(false);
   public token = signal<string>('');
 
-  public authenticate(credentials: Credentials | undefined): Observable<any> {
-    const basicAuth = credentials
-      ? 'Basic ' + btoa(credentials.username + ':' + credentials.password)
-      : '';
-
-    const headers = new HttpHeaders({ authorization: basicAuth });
-
+  public authenticate(credentials: LoginRequest): Observable<any> {
     return this.http
-      .post(this.authenticationServiceBaseURL + '/login', null, {
-        headers: headers,
-      })
+      .post(this.authServiceBaseUrl + this.authServiceLoginUri, credentials)
       .pipe(
         map((response) => {
-          if ((response as { name: string }).name === credentials?.username) {
+          if ((response as LoginResponse).token) {
+            const authToken = (response as LoginResponse).token;
             this.isAuthenticated.set(true);
-            this.token.set(basicAuth);
-            localStorage.setItem('token', basicAuth);
+            this.token.set(authToken);
+            localStorage.setItem('token', authToken);
           }
+
           return response;
         })
       );

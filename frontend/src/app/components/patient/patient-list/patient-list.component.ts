@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CustomErrorResponse } from '../../../models/CustomErrorResponse';
 
 @Component({
   selector: 'app-patient-list',
@@ -28,6 +29,8 @@ export class PatientListComponent implements OnInit {
   private patientService: PatientService = inject(PatientService);
   private router: Router = inject(Router);
 
+  public displayApiError = signal<boolean>(false);
+  public error = signal<CustomErrorResponse>({} as CustomErrorResponse);
   public isLoading = signal<boolean>(false);
   public isUpdateSuccessful = signal<boolean>(false);
   public isAddSuccessful = signal<boolean>(false);
@@ -72,10 +75,19 @@ export class PatientListComponent implements OnInit {
   ngOnInit() {
     this.isLoading.set(true);
 
-    this.patientService.getPatients().subscribe((patients: Patient[]) => {
-      this.patients = patients;
-      this.isLoading.set(false);
-      this.initDataSource();
+    this.patientService.getPatients().subscribe({
+      next: (patients) => {
+        this.patients = patients;
+        this.initDataSource();
+        this.isLoading.set(false);
+        this.displayApiError.set(false);
+      },
+      error: (error: CustomErrorResponse) => {
+        console.log('Error fetching patients:', error);
+        this.error.set(error);
+        this.isLoading.set(false);
+        this.displayApiError.set(true);
+      },
     });
   }
 

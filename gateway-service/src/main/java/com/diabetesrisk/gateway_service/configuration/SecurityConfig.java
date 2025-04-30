@@ -20,11 +20,12 @@ public class SecurityConfig {
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .pathMatchers("/login").permitAll()
-                        .anyExchange().authenticated()
-                )
-                .httpBasic(withDefaults());
+//                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//                        .pathMatchers("auth/login").permitAll()
+//                                .anyExchange().authenticated()
+                                .anyExchange().permitAll()
+                );
+//                .httpBasic(withDefaults());
 
         return http.build();
     }

@@ -12,11 +12,19 @@
 
 <!-- Alerts -->
 <section id="alerts">
+    @if (displayApiError()) {
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">{{ error().status }} - {{ error().statusText }}</h4>
+        <p>{{ error().message }}</p>
+    </div>
+    }
+
     @if (isUpdateSuccessful()) {
     <div class="alert alert-success mt-3" role="alert">
         Patient updated successfully!
     </div>
     }
+
     @if (isAddSuccessful()) {
     <div class="alert alert-success mt-3" role="alert">
         Patient added successfully!

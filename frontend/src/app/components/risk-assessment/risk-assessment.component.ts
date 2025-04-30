@@ -10,6 +10,7 @@ import {
 import { RiskAssessement, RiskColor } from '../../models/risk-assessement';
 import { RiskAssessmentService } from '../../services/risk-assessment.service';
 import { Subscription } from 'rxjs';
+import { CustomErrorResponse } from '../../models/CustomErrorResponse';
 
 @Component({
   selector: 'app-risk-assessment',
@@ -33,8 +34,9 @@ export class RiskAssessmentComponent implements OnInit, OnDestroy {
         next: (riskAssessment: string) => {
           this.initRiskAssessment(riskAssessment);
         },
-        error: (error: HttpErrorResponse) => {
-          console.error(error);
+        error: (error: CustomErrorResponse) => {
+          console.log(error);
+          this.initRiskAssessment('SERVICE_UNAVAILABLE');
         },
       });
 
@@ -76,6 +78,11 @@ export class RiskAssessmentComponent implements OnInit, OnDestroy {
           color: RiskColor.EARLY_ONSET,
         });
         break;
+      default:
+        this.riskAssessment.set({
+          riskLevel: riskAssessment,
+          color: RiskColor.DEFAULT,
+        });
     }
     // console.log('Risk assessment: ', this.riskAssessment());
   }
