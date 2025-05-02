@@ -9,9 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Service
 public class RiskAssessmentService {
@@ -166,28 +169,43 @@ public class RiskAssessmentService {
      * @return The count of triggers found in the notes.
      */
     private int calculateTriggerCount(List<Note> notes) {
-        int triggerCount = 0;
         List<String> triggers = diabetesReader.getTriggers()
                 .stream()
                 .map(String::toLowerCase)
                 .toList();
         log.info("Triggers: {}", triggers);
 
-        for (Note note : notes) {
-            List<String> noteWords = List.of(note.getNote().split(" "));
-            log.info("Note words: {}", noteWords);
-            for (String word : noteWords) {
-                // Normalize the word by removing comma and converting to lowercase
-                word = word.replaceAll(",", "").toLowerCase();
-                log.debug("Normalized word: {}", word);
-                // Check if the word is a trigger
-                if (triggers.contains(word)) {
-                    log.info("Trigger found: {}", word);
-                    triggerCount++;
-                }
-            }
+        return (int) notes.stream()
+                .flatMap(note -> extractWordsFromNote(note.getNote()).stream())
+                .filter(word -> isTriggerWord(word, triggers))
+                .count();
+    }
+
+    /**
+     * This method checks if a given word is a trigger word.
+     *
+     * @param word    The word to check.
+     * @param triggers A list of trigger words.
+     * @return True if the word is a trigger, false otherwise.
+     */
+    private static boolean isTriggerWord(String word, List<String> triggers) {
+        boolean isTriggerWord = triggers.contains(word);
+        if (isTriggerWord) {
+            log.info("Trigger found: {}", word);
         }
-        log.info("Trigger count: {}", triggerCount);
-        return triggerCount;
+        return isTriggerWord;
+    }
+
+    /**
+     * This method extracts words from a note and normalizes them.
+     * The normalization process includes removing extra spaces, new line, comma, dots and converting to lowercase.
+     *
+     * @param noteContent The content of the note to extract words from.
+     * @return A list of normalized words extracted from the note.
+     */
+    private List<String> extractWordsFromNote(String noteContent) {
+        String normalizedNote = noteContent.replaceAll("[,.!?]", " ").replaceAll("\\s+", " ").trim();
+        log.info("Normalized note: {}", normalizedNote);
+        return List.of(normalizedNote.toLowerCase().split(" "));
     }
 }

@@ -1,6 +1,5 @@
-package com.diabetesrisk.patient_service.it;
+package com.diabetesrisk.patient_service;
 
-import com.diabetesrisk.patient_service.PatientServiceApplication;
 import com.diabetesrisk.patient_service.model.Patient;
 import com.diabetesrisk.patient_service.repository.PatientRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 @AutoConfigureMockMvc
 @WithMockUser(username = "test-user")
-class PatientServiceIT {
+class PatientServiceApplicationTest {
 
 	static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(
 			"postgres:16-alpine"
@@ -58,9 +58,13 @@ class PatientServiceIT {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	private static final HttpHeaders headers = new HttpHeaders();
+
 	@BeforeAll
 	static void beforeAll() {
 		postgresContainer.start();
+		headers.setBearerAuth("token");
+		headers.set("X-User-Validated", "true");
 	}
 
 	@AfterAll
@@ -89,7 +93,8 @@ class PatientServiceIT {
 		assertThat(patients).isNotEmpty();
 		assertThat(patients).hasSize(4);
 
-		mockMvc.perform(get("/patients"))
+		mockMvc.perform(get("/patients")
+						.headers(headers))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -105,7 +110,8 @@ class PatientServiceIT {
 		@ValueSource(ints = {1, 2, 3, 4})
 		@DisplayName("should find 1 patient with id 1, 2, 3 and 4")
 		void getPatient(int patientId) throws Exception {
-			mockMvc.perform(get("/patients/" + patientId))
+			mockMvc.perform(get("/patients/" + patientId)
+							.headers(headers))
 					.andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -115,7 +121,8 @@ class PatientServiceIT {
 		@Test
 		@DisplayName("should not find patient with id 99")
 		void getPatient_notFound() throws Exception {
-			mockMvc.perform(get("/patients/99"))
+			mockMvc.perform(get("/patients/99")
+							.headers(headers))
 					.andDo(print())
 					.andExpect(status().isNotFound());
 		}
@@ -124,7 +131,8 @@ class PatientServiceIT {
 		@ValueSource(ints = {-9, -1, 0})
 		@DisplayName("should throw 400 Bad Request for invalid id")
 		void getPatient_InvalidId(int invalidId) throws Exception {
-			mockMvc.perform(get("/patients/" + invalidId))
+			mockMvc.perform(get("/patients/" + invalidId)
+							.headers(headers))
 					.andDo(print())
 					.andExpect(status().isBadRequest())
 					.andExpect(jsonPath("$.id")
@@ -140,7 +148,8 @@ class PatientServiceIT {
 		@ValueSource(ints = {1, 2, 3, 4})
 		@DisplayName("should find 1 patientDto with id 1, 2, 3 and 4")
 		void getPatientDto(int patientId) throws Exception {
-			mockMvc.perform(get("/patients/risk-assessment/" + patientId))
+			mockMvc.perform(get("/patients/risk-assessment/" + patientId)
+							.headers(headers))
 					.andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -152,7 +161,8 @@ class PatientServiceIT {
 		@Test
 		@DisplayName("should not find patientDto with id 88")
 		void getPatientDto_notFound() throws Exception {
-			mockMvc.perform(get("/patients/risk-assessment/88"))
+			mockMvc.perform(get("/patients/risk-assessment/88")
+							.headers(headers))
 					.andDo(print())
 					.andExpect(status().isNotFound());
 		}
@@ -161,7 +171,8 @@ class PatientServiceIT {
 		@ValueSource(ints = {-9, -1, 0})
 		@DisplayName("should throw 400 Bad Request for invalid id")
 		void getPatientDto_InvalidId(int invalidId) throws Exception {
-			mockMvc.perform(get("/patients/risk-assessment/" + invalidId))
+			mockMvc.perform(get("/patients/risk-assessment/" + invalidId)
+							.headers(headers))
 					.andDo(print())
 					.andExpect(status().isBadRequest())
 					.andExpect(jsonPath("$.id")
@@ -184,6 +195,7 @@ class PatientServiceIT {
 					.gender("M");
 
 			mockMvc.perform(post("/patients")
+							.headers(headers)
 							.contentType(MediaType.APPLICATION_JSON)
 							.content(objectMapper.writeValueAsString(patient)))
 					.andDo(print())
@@ -197,6 +209,7 @@ class PatientServiceIT {
 			Patient patient = new Patient();
 
 			mockMvc.perform(post("/patients")
+							.headers(headers)
 							.contentType(MediaType.APPLICATION_JSON)
 							.content(objectMapper.writeValueAsString(patient)))
 					.andDo(print())
@@ -217,6 +230,7 @@ class PatientServiceIT {
 					.gender("S");
 
 			mockMvc.perform(post("/patients")
+							.headers(headers)
 							.contentType(MediaType.APPLICATION_JSON)
 							.content(objectMapper.writeValueAsString(patient)))
 					.andDo(print())
@@ -238,6 +252,7 @@ class PatientServiceIT {
 			patient.setFirstname("John");
 
 			mockMvc.perform(put("/patients/" + patient.getId())
+							.headers(headers)
 							.contentType(MediaType.APPLICATION_JSON)
 							.content(objectMapper.writeValueAsString(patient)))
 					.andDo(print())
@@ -253,6 +268,7 @@ class PatientServiceIT {
 			patient.setId(6);
 
 			mockMvc.perform(put("/patients/" + patient.getId())
+							.headers(headers)
 							.contentType(MediaType.APPLICATION_JSON)
 							.content(objectMapper.writeValueAsString(patient)))
 					.andDo(print())
@@ -266,6 +282,7 @@ class PatientServiceIT {
 			Patient patient = new Patient();
 
 			mockMvc.perform(put("/patients/" + patient.getId())
+							.headers(headers)
 							.contentType(MediaType.APPLICATION_JSON)
 							.content(objectMapper.writeValueAsString(patient)))
 					.andDo(print())
@@ -286,6 +303,7 @@ class PatientServiceIT {
 					.gender("S");
 
 			mockMvc.perform(put("/patients/" + patient.getId())
+							.headers(headers)
 							.contentType(MediaType.APPLICATION_JSON)
 							.content(objectMapper.writeValueAsString(patient)))
 					.andDo(print())

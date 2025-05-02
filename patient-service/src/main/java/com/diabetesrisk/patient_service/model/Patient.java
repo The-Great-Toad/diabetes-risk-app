@@ -96,8 +96,8 @@ public class Patient {
         return phone;
     }
 
-    public void setPhone(String phoneNumber) {
-        this.phone = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     @Override

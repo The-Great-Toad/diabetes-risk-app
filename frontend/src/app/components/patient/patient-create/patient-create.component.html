@@ -1,0 +1,10 @@
+<h1>Add a new patient</h1>
+
+<!-- Spinner -->
+@if (isLoading()) {
+<mat-progress-bar mode="query"></mat-progress-bar>
+}
+
+<!-- Patient Form -->
+<app-patient-form [patient]="patient" (onPatientSubmit)="handlePatientSubmission()">
+</app-patient-form>

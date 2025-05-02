@@ -12,10 +12,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   const headers = new HttpHeaders({ Authorization: 'Bearer ' + token });
-  console.log('auth interceptor - headers', headers);
+  //   console.log('auth interceptor - headers', headers);
 
   const newReq = req.clone({ headers });
-  console.log('auth interceptor - newReq', newReq);
+  //   console.log('auth interceptor - newReq', newReq);
 
   return next(newReq);
 };
