@@ -235,6 +235,15 @@ class RiskAssessmentServiceTest {
         assertNull(result);
     }
 
+    @Test
+    void shouldNormalizeNoteProperly() throws JsonProcessingException {
+        String note = "Taille,\n\nPoids,\n Fumeur, \nAnormal,, , Cholestérol\n, Vertiges, Rechute\t, \tRéaction, Anticorps";
+        Patient patient = new Patient().id(9).age(29).gender("M");
+        RiskLevel expected = RiskLevel.EARLY_ONSET;
+
+        testRiskAssessment(note, patient, expected);
+    }
+
     private List<String> getTriggers() {
         return List.of(
                 "Hémoglobine A1C",
@@ -251,6 +260,19 @@ class RiskAssessmentServiceTest {
                 "Anticorps");
     }
 
+    private void testRiskAssessment(String note, Patient patient, RiskLevel expected) throws JsonProcessingException {
+        mockClientsResponse(patient, note);
+
+        if (!Objects.equals("", note)) {
+            when(reader.getTriggers()).thenReturn(getTriggers());
+        }
+
+        RiskLevel result = riskAssessmentService.getRiskAssessment(patient.getId(), "token");
+
+        assertNotNull(result);
+        assertEquals(expected, result);
+    }
+
     private void mockClientsResponse(Patient patient, String note) throws JsonProcessingException {
         List<Note> notes = Objects.equals("", note) ?
                 Collections.emptyList() :
@@ -263,18 +285,5 @@ class RiskAssessmentServiceTest {
         notesMockServer.enqueue(new MockResponse()
                 .setBody(objectMapper.writeValueAsString(notes))
                 .addHeader("Content-Type", "application/json"));
-    }
-
-    private void testRiskAssessment(String note, Patient patient, RiskLevel expected) throws JsonProcessingException {
-        mockClientsResponse(patient, note);
-
-        if (!Objects.equals("", note)) {
-            when(reader.getTriggers()).thenReturn(getTriggers());
-        }
-
-        RiskLevel result = riskAssessmentService.getRiskAssessment(patient.getId(), "token");
-
-        assertNotNull(result);
-        assertEquals(expected, result);
     }
 }

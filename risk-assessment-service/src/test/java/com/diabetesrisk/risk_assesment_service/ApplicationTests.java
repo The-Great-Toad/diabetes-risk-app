@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -25,7 +26,9 @@ class ApplicationTests {
 
 	@Test
 	void testActuatorHealthAPI() throws Exception {
-		mockMvc.perform(get("/actuator/health"))
+		mockMvc.perform(get("/actuator/health")
+						.header("Authorization", "Bearer token")
+						.header("X-User-Validated", "true"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/vnd.spring-boot.actuator.v3+json"));
 	}

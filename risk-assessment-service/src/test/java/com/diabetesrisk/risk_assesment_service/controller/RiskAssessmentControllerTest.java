@@ -30,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class RiskAssessmentControllerTest {
 
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER_TOKEN = "Bearer token";
     @InjectMocks
     private RiskAssessmentController riskAssessmentController;
 
@@ -54,7 +56,8 @@ class RiskAssessmentControllerTest {
 
             when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenReturn(riskLevel);
 
-            mockMvc.perform(get("/risk-assessment/{patientId}", patientId))
+            mockMvc.perform(get("/risk-assessment/{patientId}", patientId)
+                            .header(AUTHORIZATION, BEARER_TOKEN))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").value(expectedResult));
@@ -68,7 +71,8 @@ class RiskAssessmentControllerTest {
 
             when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenReturn(riskLevel);
 
-            mockMvc.perform(get("/risk-assessment/{patientId}", patientId))
+            mockMvc.perform(get("/risk-assessment/{patientId}", patientId)
+                            .header(AUTHORIZATION, BEARER_TOKEN))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").value(expectedResult));
@@ -82,7 +86,8 @@ class RiskAssessmentControllerTest {
 
             when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenReturn(riskLevel);
 
-            mockMvc.perform(get("/risk-assessment/{patientId}", patientId))
+            mockMvc.perform(get("/risk-assessment/{patientId}", patientId)
+                            .header(AUTHORIZATION, BEARER_TOKEN))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").value(expectedResult));
@@ -96,7 +101,8 @@ class RiskAssessmentControllerTest {
 
             when(riskAssessmentService.getRiskAssessment(anyInt(), anyString())).thenReturn(riskLevel);
 
-            mockMvc.perform(get("/risk-assessment/{patientId}", patientId))
+            mockMvc.perform(get("/risk-assessment/{patientId}", patientId)
+                            .header(AUTHORIZATION, BEARER_TOKEN))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").value(expectedResult));
@@ -112,7 +118,8 @@ class RiskAssessmentControllerTest {
 
             assertThatExceptionOfType(ServletException.class)
                     .isThrownBy(() -> mockMvc
-                                    .perform(get("/risk-assessment/{patientId}", invalidPatientId))
+                                    .perform(get("/risk-assessment/{patientId}", invalidPatientId)
+                                            .header(AUTHORIZATION, BEARER_TOKEN))
                                     .andDo(print())
                                     .andExpect(status().isBadRequest()))
                     .withMessageContaining("Invalid patient ID");

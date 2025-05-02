@@ -58,13 +58,18 @@ export class PatientFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     /* Init Form */
     this.patientForm = new FormGroup({
-      firstname: new FormControl('', [Validators.required]),
-      lastname: new FormControl('', [Validators.required]),
+      firstname: new FormControl('', [
+        Validators.required,
+        Validators.pattern(this.nameRegex),
+      ]),
+      lastname: new FormControl('', [
+        Validators.required,
+        Validators.pattern(this.nameRegex),
+      ]),
       birthDate: new FormControl(null, [Validators.required]),
       gender: new FormControl('', [Validators.required]),
-      address: new FormControl('', [Validators.required]),
+      address: new FormControl(''),
       phone: new FormControl('', [
-        Validators.required,
         Validators.pattern(this.phoneRegex),
         Validators.maxLength(this.phoneLength),
       ]),
@@ -152,8 +157,6 @@ export class PatientFormComponent implements OnInit, OnDestroy {
     this.isFormSubmitted.set(true);
     console.log('Patient Form:', this.patientForm.value);
 
-    this.validateForm();
-
     if (!this.patientForm.valid) {
       this.isLoading.set(false);
       return;
@@ -173,25 +176,6 @@ export class PatientFormComponent implements OnInit, OnDestroy {
         console.error(error);
       },
     });
-  }
-
-  private validateForm() {
-    /* Validate Lastname & Firstname */
-    if (!this.nameRegex.test(this.patientForm.get('lastname')?.value)) {
-      this.patientForm.get('lastname')?.setErrors({ invalid: true });
-    }
-
-    if (!this.nameRegex.test(this.patientForm.get('firstname')?.value)) {
-      this.patientForm.get('firstname')?.setErrors({ invalid: true });
-    }
-
-    /* Validate Phone */
-    if (
-      !this.phoneRegex.test(this.patientForm.get('phone')?.value) ||
-      this.patientForm.get('phone')?.value.length !== this.phoneLength
-    ) {
-      this.patientForm.get('phone')?.setErrors({ invalid: true });
-    }
   }
 
   private updatePatientValues() {
@@ -222,7 +206,8 @@ export class PatientFormComponent implements OnInit, OnDestroy {
 
   public validatePhoneInputValue(event: KeyboardEvent) {
     const key = event.key;
-    if (key !== 'Backspace' && !this.onlyNumbersRegex.test(key)) {
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'];
+    if (!allowedKeys.includes(key) && !this.onlyNumbersRegex.test(key)) {
       event.preventDefault();
     }
   }

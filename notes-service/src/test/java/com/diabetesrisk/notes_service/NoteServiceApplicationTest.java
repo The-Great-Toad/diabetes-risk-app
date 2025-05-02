@@ -1,6 +1,5 @@
-package com.diabetesrisk.notes_service.it;
+package com.diabetesrisk.notes_service;
 
-import com.diabetesrisk.notes_service.NotesServiceApplication;
 import com.diabetesrisk.notes_service.model.Note;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 @AutoConfigureMockMvc
 @WithMockUser(username = "test-user")
-public class NoteServiceIT {
+public class NoteServiceApplicationTest {
 
     private static final String MONGO_DATABASE = "test_db";
 
@@ -51,6 +51,8 @@ public class NoteServiceIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final HttpHeaders headers = new HttpHeaders();
+
     @AfterAll
     static void tearDown() {
         mongoDBContainer.stop();
@@ -62,6 +64,9 @@ public class NoteServiceIT {
         String mongoDBUri = String.format("mongodb://%s:%s/%s", mongoDBContainer.getHost(), mongoDBContainer.getFirstMappedPort(), MONGO_DATABASE);
         System.out.println("MongoDB URI: " + mongoDBUri);
         registry.add("spring.data.mongodb.uri", () -> mongoDBUri);
+
+        headers.setBearerAuth("token");
+        headers.set("X-User-Validated", "true");
     }
 
     @Test
@@ -79,6 +84,7 @@ public class NoteServiceIT {
         @DisplayName("should find 1 note for patient 1")
         void shouldFind1NoteForPatient1() throws Exception {
             mockMvc.perform(get("/notes/{patientId}", 1)
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -90,6 +96,7 @@ public class NoteServiceIT {
         @DisplayName("should find 2 notes for patient 2")
         void shouldFind2NoteForPatient2() throws Exception {
             mockMvc.perform(get("/notes/{patientId}", 2)
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -101,6 +108,7 @@ public class NoteServiceIT {
         @DisplayName("should find 3 notes for patient 3")
         void shouldFind2NoteForPatient3() throws Exception {
             mockMvc.perform(get("/notes/{patientId}", 3)
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -112,6 +120,7 @@ public class NoteServiceIT {
         @DisplayName("should find 4 notes for patient 4")
         void shouldFind4NoteForPatient4() throws Exception {
             mockMvc.perform(get("/notes/{patientId}", 4)
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -123,6 +132,7 @@ public class NoteServiceIT {
         @DisplayName("should find 0 notes for patient 5")
         void shouldFind0NoteForPatient5() throws Exception {
             mockMvc.perform(get("/notes/{patientId}", 5)
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -134,6 +144,7 @@ public class NoteServiceIT {
         @DisplayName("should return 400 for invalid patientId")
         void shouldReturn400ForInvalidPatientId() throws Exception {
             mockMvc.perform(get("/notes/{patientId}", -1)
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
@@ -151,6 +162,7 @@ public class NoteServiceIT {
             Note note = new Note(6, "Test", LocalDate.now(), "Test note content");
 
             mockMvc.perform(post("/notes")
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(note)))
                     .andDo(print())
@@ -173,6 +185,7 @@ public class NoteServiceIT {
             String expectedNoteError = "Note cannot be empty";
 
             mockMvc.perform(post("/notes")
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(note)))
                     .andDo(print())
@@ -186,6 +199,7 @@ public class NoteServiceIT {
             expectedPatientIdError = "Patient ID must be greater than 0";
 
             mockMvc.perform(post("/notes")
+                            .headers(headers)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(note2)))
                     .andDo(print())
