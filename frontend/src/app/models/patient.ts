@@ -5,5 +5,6 @@ export class Patient {
   birthDate!: string;
   gender!: string;
   address!: string;
-  phoneNumber!: string;
+  phone!: string;
+  isNew: boolean = false;
 }

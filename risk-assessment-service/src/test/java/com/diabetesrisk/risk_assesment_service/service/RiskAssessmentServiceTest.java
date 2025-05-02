@@ -237,7 +237,7 @@ class RiskAssessmentServiceTest {
 
     @Test
     void shouldNormalizeNoteProperly() throws JsonProcessingException {
-        String note = "Taille,\n\nPoids,\n Fumeur, \nAnormal,, , Cholestérol\n, Vertiges, Rechute\t, \tRéaction, Anticorps";
+        String note = "Taille,\n\nPoids,\n Fumeur, \nAnormal,, , Cholestérol.\n, Vertiges!!, Rechute?\t, \tRéaction, Anticorps";
         Patient patient = new Patient().id(9).age(29).gender("M");
         RiskLevel expected = RiskLevel.EARLY_ONSET;
 

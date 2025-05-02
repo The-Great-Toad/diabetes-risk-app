@@ -4,10 +4,7 @@ import { PatientService } from '../../../services/patient.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import {
-  MatDatepickerInputEvent,
-  MatDatepickerModule,
-} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
@@ -18,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { NotesListComponent } from '../../notes/notes-list/notes-list.component';
 import { RiskAssessmentComponent } from '../../risk-assessment/risk-assessment.component';
+import { PatientFormComponent } from '../patient-form/patient-form.component';
 
 @Component({
   selector: 'app-patient-detail',
@@ -30,6 +28,7 @@ import { RiskAssessmentComponent } from '../../risk-assessment/risk-assessment.c
     MatButtonModule,
     MatProgressBarModule,
     NotesListComponent,
+    PatientFormComponent,
     RiskAssessmentComponent,
   ],
   templateUrl: './patient-detail.component.html',
@@ -42,13 +41,13 @@ export class PatientDetailComponent implements OnDestroy {
 
   public isLoading = signal<boolean>(false);
   public isUpdating = signal<boolean>(false);
-  public isConsulting = signal<boolean>(false);
   public action = signal<string>('');
-  public hasDateOfBirthChanged = signal<boolean>(false);
   public patientId!: number;
 
   private patient$!: Subscription;
   private subscription: Subscription[] = [];
+
+  public patient!: Patient;
 
   @Input()
   set id(id: number) {
@@ -66,36 +65,25 @@ export class PatientDetailComponent implements OnDestroy {
     this.subscription.push(this.patient$);
   }
 
-  public patient!: Patient;
-  //   public patient!: Signal<Patient | undefined>;
-
   public minDate: Moment = moment().subtract(110, 'year');
   public maxDate: Moment = moment();
 
   constructor() {
     this.isLoading.set(true);
-    const isUpdating: boolean = this.route.snapshot.routeConfig?.path
-      ? this.route.snapshot.routeConfig.path.includes('edit')
-      : false;
-    this.isUpdating.set(isUpdating);
-    this.isConsulting.set(!isUpdating);
+    this.isUpdating.set(
+      this.route.snapshot.routeConfig?.path?.includes('edit') ?? false
+    );
   }
 
   ngOnDestroy(): void {
     this.subscription.forEach((sub) => sub.unsubscribe());
   }
 
-  updateDate(event: MatDatepickerInputEvent<Date>): void {
-    this.hasDateOfBirthChanged.set(true);
-  }
-
-  public updatePatient(): void {
-    if (this.hasDateOfBirthChanged()) {
-      this.patient.birthDate = moment(this.patient.birthDate).format(
-        'YYYY-MM-DD'
-      );
-    }
-
+  /**
+   * Handles the submission of patient data.
+   * On successful update, navigates to the patients-list page.
+   */
+  public handlePatientSubmission(): void {
     this.patientService.updatePatient(this.patient).subscribe({
       next: () => {
         this.router.navigateByUrl('/patients', {

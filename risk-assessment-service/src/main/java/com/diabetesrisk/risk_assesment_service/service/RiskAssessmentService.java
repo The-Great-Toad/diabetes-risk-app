@@ -189,7 +189,7 @@ public class RiskAssessmentService {
      * @return True if the word is a trigger, false otherwise.
      */
     private static boolean isTriggerWord(String word, List<String> triggers) {
-        boolean isTriggerWord = triggers.contains(word.toLowerCase());
+        boolean isTriggerWord = triggers.contains(word);
         if (isTriggerWord) {
             log.info("Trigger found: {}", word);
         }
@@ -198,13 +198,13 @@ public class RiskAssessmentService {
 
     /**
      * This method extracts words from a note and normalizes them.
-     * The normalization process includes removing extra spaces, new line, comma, and converting to lowercase.
+     * The normalization process includes removing extra spaces, new line, comma, dots and converting to lowercase.
      *
      * @param noteContent The content of the note to extract words from.
      * @return A list of normalized words extracted from the note.
      */
     private List<String> extractWordsFromNote(String noteContent) {
-        String normalizedNote = noteContent.replaceAll(",", " ").replaceAll("\\s+", " ").trim();
+        String normalizedNote = noteContent.replaceAll("[,.!?]", " ").replaceAll("\\s+", " ").trim();
         log.info("Normalized note: {}", normalizedNote);
         return List.of(normalizedNote.toLowerCase().split(" "));
     }
